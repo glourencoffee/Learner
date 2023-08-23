@@ -12,7 +12,12 @@ export interface RequestOptions {
 
 export async function request(method: RequestMethod, path: string, options: RequestOptions = {}) {
   const completeUrl = makeCompleteUrl(path, options.queryParams);
-  const requestInit: RequestInit = { method };
+  
+  const requestInit: RequestInit = {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    mode: 'cors',
+  };
 
   if (options.body !== undefined) {
     requestInit.body = JSON.stringify(options.body);
