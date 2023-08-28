@@ -91,7 +91,9 @@ export function handleError(error: Error, req: Request, res: Response, _: NextFu
   if (error instanceof ValidationError) {
     // This error is thrown by `yup` if a request's data fails to fit into an schema.
     // Create an HttpError for it and handle it as a trusted error.
-    handleTrustedError(new UnprocessableContentError(error.message), req, res);
+    const httpError = new UnprocessableContentError(error.message, error.errors);
+    
+    handleTrustedError(httpError, req, res);
   }
   else if (error instanceof HttpError) {
     handleTrustedError(error, req, res);
