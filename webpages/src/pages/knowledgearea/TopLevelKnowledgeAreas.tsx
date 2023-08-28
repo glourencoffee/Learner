@@ -11,9 +11,9 @@ import {
 } from '@mui/material';
 import usePromise from 'react-promise-suspense';
 import { nanoid } from 'nanoid';
-import { getTopLevelKnowledgeAreas } from '../requests/knowledgeArea';
-import SearchBar from '../components/SearchBar';
-import AlphabeticPagination from '../components/AlphabeticPagination';
+import { getTopLevelKnowledgeAreas } from '../../requests/knowledgeArea';
+import SearchBar from '../../components/SearchBar';
+import AlphabeticPagination from '../../components/AlphabeticPagination';
 
 interface TopLevelKnowledgeArea {
   id?: number;

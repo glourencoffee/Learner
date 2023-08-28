@@ -4,8 +4,11 @@ import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import Header from './components/Header';
 import ErrorPage from './pages/ErrorPage';
 import UnderConstruction from './pages/UnderConstruction';
-import TopLevelKnowledgeAreas from './pages/TopLevelKnowledgeAreas';
-import { NewKnowledgeArea, EditKnowledgeArea } from './pages/knowledgearea';
+import {
+  TopLevelKnowledgeAreas,
+  NewKnowledgeArea,
+  EditKnowledgeArea
+} from './pages/knowledgearea';
 
 function renderErrorPage({ error }: FallbackProps): React.ReactNode {
   return <ErrorPage error={error} />;
