@@ -17,7 +17,7 @@ const navLinks = [
   },
   {
     title: 'Knowledge Areas',
-    path: '/knowledgeareas'
+    path: '/knowledgearea'
   }
 ];
 

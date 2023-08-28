@@ -1,26 +1,45 @@
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { Stack } from '@mui/material';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import Header from './components/Header';
+import ErrorPage from './pages/ErrorPage';
 import UnderConstruction from './pages/UnderConstruction';
 import TopLevelKnowledgeAreas from './pages/TopLevelKnowledgeAreas';
+import { NewKnowledgeArea, EditKnowledgeArea } from './pages/knowledgearea';
+
+function renderErrorPage({ error }: FallbackProps): React.ReactNode {
+  return <ErrorPage error={error} />;
+}
 
 function Layout(): JSX.Element {
   return (
-    <>
+    <Stack id='layout' height='stretch'>
       <Header />
-      <Outlet />
-    </>
+      <ErrorBoundary fallbackRender={renderErrorPage}>
+        <Stack component='main'>
+          <Outlet />
+        </Stack>
+      </ErrorBoundary>
+    </Stack>
   );
 }
 
-export default function App() {
+export default function App(): JSX.Element {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={ <Layout /> }>
+        <Route path='/' element={<Layout />}>
           <Route index                 element={<UnderConstruction      />} />
           <Route path='questions'      element={<UnderConstruction      />} />
           <Route path='stats'          element={<UnderConstruction      />} />
-          <Route path='knowledgeareas' element={<TopLevelKnowledgeAreas />} />
+          <Route path='knowledgearea'>
+            <Route index          element={ <TopLevelKnowledgeAreas /> } />
+            <Route path='new'     element={ <NewKnowledgeArea       /> } />
+            <Route path=':areaId'>
+              <Route index        element={ <UnderConstruction /> } />
+              <Route path='edit'  element={ <EditKnowledgeArea /> } />
+            </Route>
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

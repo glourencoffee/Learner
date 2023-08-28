@@ -3,7 +3,9 @@ import { standardErrorSchema } from './standardError';
 import { RequestError } from './RequestError';
 import { makeCompleteUrl } from './url';
 
-type RequestMethod = 'get' | 'post';
+type RequestMethod = (
+  'get' | 'post' | 'put' | 'delete'
+);
 
 export interface RequestOptions {
   queryParams?: object;
@@ -66,4 +68,8 @@ post<TIn extends yup.Maybe<yup.AnyObject>, TContext, TDefault, TFlags extends yu
   options: RequestOptions = {}
 ) {
   return schemaRequest('post', schema, path, options);
+}
+
+export async function put(path: string, options: RequestOptions = {}) {
+  return request('put', path, options);
 }

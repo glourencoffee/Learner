@@ -1,11 +1,33 @@
-import * as yup from 'yup';
+import { object, array, number, string } from 'yup';
 
-export const getTopLevelKnowledgeAreaSchema = yup
-  .object({
-    areas: yup.array().required().of(
-      yup.object({
-        id:   yup.number().required(),
-        name: yup.string().required()
+export const getTopLevelKnowledgeAreaSchema = 
+  object({
+    areas: array().required().of(
+      object({
+        id:   number().required(),
+        name: string().required()
       })
     )
+  });
+
+export const getKnowledgeAreaSchema =
+  object({
+    id:       number().required(),
+    name:     string().required(),
+    parentId: number().required().nullable()
+  });
+
+export const getChildrenOfKnowledgeAreaSchema =
+  object({
+    children: array().required().of(
+      object({
+        id:   number().required(),
+        name: string().required()
+      })
+    )
+  });
+
+export const createKnowledgeAreaSchema =
+  object({
+    id: number().required()
   });

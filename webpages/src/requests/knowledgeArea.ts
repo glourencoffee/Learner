@@ -1,5 +1,6 @@
 import * as request from './request';
 import * as schemas from '../schemas/knowledgeArea';
+import { KnowledgeArea } from '../models/KnowledgeArea';
 
 interface GetTopLevelKnowledgeAreaArgs {
   nameFilter?: string;
@@ -11,7 +12,7 @@ type GetTopLevelKnowledgeAreaResult = Array<{
 }>
 
 export async function getTopLevelKnowledgeAreas(
-  args: GetTopLevelKnowledgeAreaArgs
+  args: GetTopLevelKnowledgeAreaArgs = {}
 ): Promise<GetTopLevelKnowledgeAreaResult> {
   
   const queryParams = args;
@@ -25,4 +26,60 @@ export async function getTopLevelKnowledgeAreas(
   );
 
   return result.areas;
+}
+
+export async function createKnowledgeArea(area: KnowledgeArea) {
+  const path = (
+    (area.parentId === null)
+    ? '/knowledgearea/toplevel'
+    : `/knowledgearea/${area.parentId}`
+  );
+
+  const result = await request.post(
+    schemas.createKnowledgeAreaSchema,
+    path,
+    {
+      body: {
+        name: area.name
+      }
+    }
+  );
+
+  return result.id;
+}
+
+export async function getKnowledgeArea(areaId: number) {
+  return request.get(
+    schemas.getKnowledgeAreaSchema,
+    `/knowledgearea/${areaId}`
+  );
+}
+
+export async function updateKnowledgeArea({ id, name, parentId }: KnowledgeArea): Promise<void> {
+  await request.put(
+    `/knowledgearea/${id}`,
+    {
+      body: {
+        name,
+        parentId
+      }
+    }
+  );
+}
+
+export async function getChildrenOfKnowledgeArea(areaId: number, nameFilter?: string) {
+
+  const queryParams = {
+    nameFilter
+  };
+
+  const result = await request.get(
+    schemas.getChildrenOfKnowledgeAreaSchema,
+    `/knowledgearea/${areaId}/children`,
+    {
+      queryParams
+    }
+  );
+
+  return result.children;
 }
