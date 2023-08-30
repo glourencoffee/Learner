@@ -383,6 +383,7 @@ None.
 - *`children`*`: `**`object[]`**
   - *`id`*`: `**`number`**
   - *`name`*`: `**`string`**
+  - *`type`*`: `**`'area' | 'topic'`**
 
 ### Details
 
@@ -400,10 +401,12 @@ A GET request is made to `/knowledgearea/1/children`. The response received is:
 {
   "children": [
     {
+      "type": "area",
       "id": 3,
       "name": "Computer Programming"
     },
     {
+      "type": "area",
       "id": 4,
       "name": "Computer Network"
     }
@@ -417,6 +420,7 @@ Another GET request is made as `/knowledgearea/1/children?nameFilter=Programming
 {
   "children": [
     {
+      "type": "area",
       "id": 3,
       "name": "Computer Programming"
     }

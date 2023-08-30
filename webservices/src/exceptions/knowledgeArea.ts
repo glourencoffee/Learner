@@ -15,13 +15,13 @@ export class KnowledgeAreaNotFoundError extends NotFoundError {
  * Thrown if the name of a knowledge area is already used by another knowledge area.
  */
 export class KnowledgeAreaNameConflictError extends ConflictError {
-  constructor(knowledgeAreaName: string, knowledgeAreaParentId: number | null) {
+  constructor(name: string, knowledgeAreaParentId: number | null) {
 
     if (knowledgeAreaParentId === null) {
-      super(`There exists already a top-level knowledge area with name '${knowledgeAreaName}'`);
+      super(`There exists already a top-level knowledge area with name '${name}'`);
     }
     else {
-      super(`There exists already a knowledge area with name '${knowledgeAreaName}' under parent id ${knowledgeAreaParentId}`);
+      super(`There exists already a child with name '${name}' under parent knowledge area ${knowledgeAreaParentId}`);
     }
 
     this.name = 'KnowledgeAreaNameConflictError';
