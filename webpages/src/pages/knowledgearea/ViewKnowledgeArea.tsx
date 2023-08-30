@@ -18,6 +18,7 @@ import { getChildrenOfKnowledgeArea, getKnowledgeArea } from '../../requests/kno
 import ProgressBackdrop from '../../components/ProgressBackdrop';
 import { TreeItem, TreeView } from '@mui/lab';
 import { Resource, createResource } from '../../requests/createResource';
+import { nanoid } from 'nanoid';
 
 function ItemLabelIconButton({ href, children }: PropsWithChildren<{ href: string }>): JSX.Element {
   function handleClick(event: React.MouseEvent<HTMLAnchorElement>): void {
@@ -40,11 +41,21 @@ function ItemLabelIconButton({ href, children }: PropsWithChildren<{ href: strin
 interface ItemLabelProps {
   id: number;
   name: string;
+  type: 'area' | 'topic';
 }
 
-function ItemLabel({ id, name }: ItemLabelProps): JSX.Element {
-  const viewUrl = `/knowledgearea/${id}`;
-  const editUrl = `/knowledgearea/${id}/edit`;
+function ItemLabel({ id, name, type }: ItemLabelProps): JSX.Element {
+  let viewUrl;
+  let editUrl;
+
+  if (type === 'area') {
+    viewUrl = `/knowledgearea/${id}`;
+    editUrl = `/knowledgearea/${id}/edit`;
+  }
+  else {
+    viewUrl = `/topic/${id}`;
+    editUrl = `/topic/${id}/edit`;
+  }
 
   return (
     <Stack
@@ -57,6 +68,11 @@ function ItemLabel({ id, name }: ItemLabelProps): JSX.Element {
         gap='0.5em'
       >
         <Typography>{name}</Typography>
+        <Chip
+          variant='monospaced'
+          size='small'
+          label={type}
+        />
         <Chip
           variant='monospaced'
           size='small'
@@ -83,13 +99,13 @@ interface ItemResultProps {
 
 function ItemResult({ id, name, childrenResource }: ItemResultProps): React.ReactNode {
   const children = childrenResource.data.read();
-  const childElements = children.map((child) => <Item key={child.id} {...child} />);
+  const childElements = children.map((child) => <Item key={nanoid()} {...child} />);
 
   return (
     <TreeItem
-      nodeId={String(id)}
+      nodeId={`area-${id}`}
       label={
-        <ItemLabel id={id} name={name} />
+        <ItemLabel id={id} name={name} type='area' />
       }
     >
       {childElements}
@@ -100,16 +116,29 @@ function ItemResult({ id, name, childrenResource }: ItemResultProps): React.Reac
 interface ItemProps {
   id: number;
   name: string;
+  type: 'area' | 'topic';
 }
 
 function Item(props: ItemProps): JSX.Element {
-  const childrenResource = createResource(getChildrenOfKnowledgeArea(props.id));
+  if (props.type === 'area') {
+    const childrenResource = createResource(getChildrenOfKnowledgeArea(props.id));
 
-  return (
-    <Suspense fallback={'Loading...'}>
-      <ItemResult {...props} childrenResource={childrenResource} />
-    </Suspense>
-  );
+    return (
+      <Suspense fallback={'Loading...'}>
+        <ItemResult {...props} childrenResource={childrenResource} />
+      </Suspense>
+    );
+  }
+  else {
+    return (
+      <TreeItem
+        nodeId={`topic-${props.id}`}
+        label={
+          <ItemLabel {...props} />
+        }
+      />
+    );
+  }
 }
 
 async function getKnowledgeAreaWithChildren(areaId: number) {
@@ -165,7 +194,7 @@ function ViewKnowledgeAreaResult({ resource }: ViewKnowledgeAreaResultProps): Re
     );
   }
 
-  const items = children.map((child) => <Item key={child.id} {...child} />);
+  const items = children.map((child) => <Item key={nanoid()} {...child} />);
 
   return (
     <Stack

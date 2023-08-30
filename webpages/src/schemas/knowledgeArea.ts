@@ -22,7 +22,8 @@ export const getChildrenOfKnowledgeAreaSchema =
     children: array().required().of(
       object({
         id:   number().required(),
-        name: string().required()
+        name: string().required(),
+        type: string().required().oneOf(['area', 'topic'])
       })
     )
   });

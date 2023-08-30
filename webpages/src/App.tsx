@@ -44,6 +44,12 @@ export default function App(): JSX.Element {
               <Route path='edit'  element={ <EditKnowledgeArea /> } />
             </Route>
           </Route>
+          <Route path='topic'>
+            <Route path=':topicId'>
+              <Route index        element={ <UnderConstruction /> } />
+              <Route path='edit'  element={ <UnderConstruction /> } />
+            </Route>
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
