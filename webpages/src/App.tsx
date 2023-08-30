@@ -7,7 +7,8 @@ import UnderConstruction from './pages/UnderConstruction';
 import {
   TopLevelKnowledgeAreas,
   NewKnowledgeArea,
-  EditKnowledgeArea
+  EditKnowledgeArea,
+  ViewKnowledgeArea
 } from './pages/knowledgearea';
 
 function renderErrorPage({ error }: FallbackProps): React.ReactNode {
@@ -19,7 +20,7 @@ function Layout(): JSX.Element {
     <Stack id='layout' height='stretch'>
       <Header />
       <ErrorBoundary fallbackRender={renderErrorPage}>
-        <Stack component='main'>
+        <Stack component='main' height='stretch'>
           <Outlet />
         </Stack>
       </ErrorBoundary>
@@ -39,7 +40,7 @@ export default function App(): JSX.Element {
             <Route index          element={ <TopLevelKnowledgeAreas /> } />
             <Route path='new'     element={ <NewKnowledgeArea       /> } />
             <Route path=':areaId'>
-              <Route index        element={ <UnderConstruction /> } />
+              <Route index        element={ <ViewKnowledgeArea /> } />
               <Route path='edit'  element={ <EditKnowledgeArea /> } />
             </Route>
           </Route>
