@@ -33,10 +33,12 @@ function TopLevelKnowledgeAreaCard(props: TopLevelKnowledgeArea): JSX.Element {
       />
     );
   }
+
+  const viewUrl = `/knowledgearea/${props.id}`;
   
   return (
     <Card sx={{ maxWidth: 400, width: '100%' }}>
-      <CardActionArea>
+      <CardActionArea href={viewUrl}>
         <CardContent
           sx={{
             display: 'flex',
