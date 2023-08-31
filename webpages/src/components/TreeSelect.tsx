@@ -220,6 +220,11 @@ export interface TreeSelectProps {
   helperText?: string;
 
   /**
+   * Whether to pass an `error` prop to `<TextField>` elements.
+   */
+  error?: boolean;
+
+  /**
    * Whether the text displayed on `<TextField>` should be the complete path
    * of the current node.
    * 
@@ -366,16 +371,32 @@ export default function TreeSelect(props: TreeSelectProps): JSX.Element {
       params.inputProps.value = state.selectedNode.getPath(props.branchSeparator);
     }
 
+    const InputProps = {
+      ...params.InputProps,
+      error: props.error
+    };
+
+    const InputLabelProps = {
+      ...params.InputLabelProps,
+      error: props.error
+    };
+
     params.inputProps.readOnly = true;
 
     return (
       <TextField
+        {...params}
         variant={props.variant}
         name={props.name}
         label={props.label}
         labelPosition={props.labelPosition}
         helperText={props.helperText}
-        {...params}
+
+        InputProps={InputProps}
+        InputLabelProps={InputLabelProps}
+        FormHelperTextProps={{
+          error: props.error
+        }}
       />
     );
   }

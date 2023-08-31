@@ -16,17 +16,21 @@ type FormTreeSelectProps = (
  * 
  * @param props The properties of this component.
  */
-export default function FormTreeSelect({ name, ...rest }: FormTreeSelectProps): JSX.Element {
+export default function FormTreeSelect({ name, helperText, ...props }: FormTreeSelectProps): JSX.Element {
 
-  const [field, _, helpers] = useField(name);
+  const [field, meta, helpers] = useField(name);
 
   function handleChange(node: TreeNode): void {
     helpers.setValue(node);
   }
 
+  const hasError = Boolean(meta.error);
+
   return (
     <TreeSelect
-      {...rest}
+      {...props}
+      helperText={meta.error || helperText}
+      error={hasError}
       name={name}
       value={field.value}
       onChange={handleChange}
