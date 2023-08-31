@@ -67,17 +67,23 @@ export async function updateKnowledgeArea({ id, name, parentId }: KnowledgeArea)
   );
 }
 
+interface getChildrenOfKnowledgeAreaOptions {
+  nameFilter?: string;
+  type?: 'area' | 'topic';
+}
+
 interface ChildOfKnowledgeArea {
   id: number,
   name: string,
   type: 'area' | 'topic';
 }
 
-export async function getChildrenOfKnowledgeArea(areaId: number, nameFilter?: string):
+export async function getChildrenOfKnowledgeArea(areaId: number, options: getChildrenOfKnowledgeAreaOptions = {}):
   Promise<ChildOfKnowledgeArea[]> {
 
   const queryParams = {
-    nameFilter
+    nameFilter: Boolean(options.nameFilter) ? options.nameFilter : undefined,
+    type: options.type
   };
 
   const result = await request.get(
