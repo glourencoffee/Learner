@@ -373,6 +373,7 @@ Retrieves the children of a knowledge area.
 #### Query params
 
 - *`nameFilter?`*`: `**`string`**
+- *`type?`*`: `**`'area' | 'topic'`**
 
 #### Body params
 
@@ -390,8 +391,10 @@ None.
 If *`{id}`* does not identify an existing knowledge area, raises `NotFoundError`.
 
 Otherwise, finds all children of the knowledge area identified by *`{id}`*, and behaves as follows:
-- If *`nameFilter`* is absent or empty, returns all those children.
-- Otherwise, returns only the children whose name case-insensitively includes *`nameFilter`*.
+- If *`nameFilter`* is present and not empty, filters in the children whose
+  name case-insensitively includes *`nameFilter`*.
+- If *`type`* is present, filters in the children whose type is same as represented by *`type`*.
+- Returns the filtered-in children, or all children if no filter was given.
 
 ### Example
 

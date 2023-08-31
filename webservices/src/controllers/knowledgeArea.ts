@@ -309,25 +309,25 @@ export async function getChildrenOfKnowledgeArea(req: Request, res: Response): P
   const params = schema.params.validateSync(req.params);
   const query  = schema.query.validateSync(req.query, { abortEarly: false, stripUnknown: true });
 
+  enum ChildType {
+    AREA  = 'area',
+    TOPIC = 'topic'
+  };
+
   // Prepare validated data for usage.
   const parentId   = params.id;
   const nameFilter = query.nameFilter ?? '';
+  const childType  = query.type ? (query.type as ChildType) : undefined;
 
   // Ensure that parent knowledge area exists.
   if (await KnowledgeArea.findByPk(parentId) == null) {
     throw new exceptions.KnowledgeAreaNotFoundError(parentId);
   }
 
-  enum ChildType {
-    AREA  = 'area',
-    TOPIC = 'topic'
-  };
+  const promises = [];
 
-  // Find children from the knowledge area `parentId`.
-  // This searchs both for child knowledge areas and child topics.
-  // The command below is the equivalent of a UNION ALL.
-  const result = await Promise.all([
-    KnowledgeArea.findAll({
+  if (childType === undefined || childType === ChildType.AREA) {
+    const areaPromise = KnowledgeArea.findAll({
       attributes: [
         'id',
         'name',
@@ -339,9 +339,15 @@ export async function getChildrenOfKnowledgeArea(req: Request, res: Response): P
           [Op.like]: `%${nameFilter}%`
         }
       },
+      order: [['name', 'ASC']],
       bind: [ChildType.AREA]
-    }),
-    Topic.findAll({
+    });
+
+    promises.push(areaPromise);
+  }
+
+  if (childType === undefined || childType === ChildType.TOPIC) {
+    const topicPromise = Topic.findAll({
       attributes: [
         'id',
         'name',
@@ -353,11 +359,21 @@ export async function getChildrenOfKnowledgeArea(req: Request, res: Response): P
           [Op.like]: `%${nameFilter}%`
         }
       },
+      order: [['name', 'ASC']],
       bind: [ChildType.TOPIC]
-    })
-  ]);
+    });
 
-  const children = result.flat().sort((a, b) => a.dataValues.name - b.dataValues.name);
+    promises.push(topicPromise);
+  }
+
+  const result = await Promise.all(promises);
+  const children = result.flat();
+  
+  // Sorting is already done at database level. Only sort here
+  // at application level if queried from more than one table.
+  if (promises.length > 1) {
+    children.sort((a, b) => a.dataValues.name - b.dataValues.name);
+  }
 
   res.status(HttpStatusCode.OK).json({ children });
 }

@@ -54,6 +54,7 @@ export const getChildrenOfKnowledgeAreaSchema = {
   }),
 
   query: object({
-    nameFilter: string().optional().trim().min(minNameLength).max(maxNameLength)
+    nameFilter: string().optional().trim().min(minNameLength).max(maxNameLength),
+    type:       string().optional().oneOf(['area', 'topic'])
   })
 };
