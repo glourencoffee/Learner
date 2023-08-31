@@ -32,7 +32,7 @@ class KnowledgeAreaTreeNode extends TreeNode {
    * @returns Child knowledge area nodes.
    */
   async fetchChildren(): Promise<TreeNode[]> {
-    const childAreas = await getChildrenOfKnowledgeArea(this.id);
+    const childAreas = await getChildrenOfKnowledgeArea(this.id, { type: 'area' });
     return childAreas.map((area) => new KnowledgeAreaTreeNode(area.id, area.name));
   }
 
@@ -71,7 +71,6 @@ class KnowledgeAreaTreeRootNode extends KnowledgeAreaTreeNode {
    * @returns Top-level knowledge area nodes.
    */
   async fetchChildren(): Promise<TreeNode[]> {
-    console.log('fetch top level');
     const topLevelAreas = await getTopLevelKnowledgeAreas();
     return topLevelAreas.map((area) => new KnowledgeAreaTreeNode(area.id, area.name));
   }
