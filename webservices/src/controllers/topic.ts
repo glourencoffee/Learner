@@ -133,7 +133,7 @@ export async function createTopic(req: Request, res: Response): Promise<any> {
       name:    topicName
     });
   
-    return res.status(HttpStatusCode.CREATED).json({ id: result.dataValues.id });
+    return res.status(HttpStatusCode.CREATED).json({ topicId: result.dataValues.id });
   }
   catch (e) {
     if (e instanceof ForeignKeyConstraintError) {
