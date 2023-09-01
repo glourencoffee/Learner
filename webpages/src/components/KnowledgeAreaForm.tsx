@@ -1,80 +1,12 @@
 import { useEffect, useState } from 'react';
 import Form, { FormAlertProps } from './Form';
-import FormTextField from './FormTextField';
-import FormTreeSelect from './FormTreeSelect';
-import { TreeNode } from './TreeSelect';
+import TextField from './TextField';
 import { KnowledgeArea } from '../models/KnowledgeArea';
-import {
-  getChildrenOfKnowledgeArea,
-  getTopLevelKnowledgeAreas
-} from '../requests/knowledgeArea';
 import ProgressBackdrop from './ProgressBackdrop';
-
-/**
- * Represents a node in the knowledge area tree.
- */
-class KnowledgeAreaTreeNode extends TreeNode {
-  public readonly id: number;
-  public readonly name: string;
-
-  constructor(id: number, name: string) {
-    super();
-
-    this.id   = id;
-    this.name = name;
-  }
-
-  
-  /**
-   * Reimplements `fetchChildren()` to fetch knowledge areas
-   * which are children of `this`.
-   * 
-   * @returns Child knowledge area nodes.
-   */
-  async fetchChildren(): Promise<TreeNode[]> {
-    const childAreas = await getChildrenOfKnowledgeArea(this.id, { type: 'area' });
-    return childAreas.map((area) => new KnowledgeAreaTreeNode(area.id, area.name));
-  }
-
-  /**
-   * Returns whether `this` has any cached child with name `name`.
-   * 
-   * @param name A name.
-   * @returns Whether `this` has a cached child with `name`.
-   */
-  hasChildWithName(name: string): boolean {
-    return this.hasChild((child) => {
-      const childName = (child as KnowledgeAreaTreeNode).name;
-      return childName.toLowerCase() === name.toLowerCase()
-    });
-  }
-
-  /**
-   * @returns `this.name`
-   */
-  toString(): string {
-    return this.name;
-  }
-}
-
-/**
- * Represents the root node.
- */
-class KnowledgeAreaTreeRootNode extends KnowledgeAreaTreeNode {
-  constructor() {
-    super(NaN, 'Root');
-  }
-
-  /**
-   * Reimplements `fetchChildren()` to fetch top-level knowledge areas.
-   * 
-   * @returns Top-level knowledge area nodes.
-   */
-  async fetchChildren(): Promise<TreeNode[]> {
-    const topLevelAreas = await getTopLevelKnowledgeAreas();
-    return topLevelAreas.map((area) => new KnowledgeAreaTreeNode(area.id, area.name));
-  }
-}
+import KnowledgeAreaTreeSelect, {
+  KnowledgeAreaTreeNode,
+  KnowledgeAreaTreeRootNode
+} from './KnowledgeAreaTreeSelect';
 
 /**
  * Extends `Form` for creation and edition of knowledge areas.
@@ -134,11 +66,11 @@ function KnowledgeAreaFormWithRoot<T>(props: KnowledgeAreaFormWithRootProps<T>):
   // Form validation
   //=================
 
-  function isNodeDisabled(node: TreeNode): boolean {
+  function isNodeDisabled(node: KnowledgeAreaTreeNode): boolean {
     if (variant === 'edition') {
       // Do not let a node select itself as a parent if this
       // form is on edition mode.
-      return (node as KnowledgeAreaTreeNode).id == defaultArea.id;
+      return node.id == defaultArea.id;
     }
     else {
       // If a form is on creation mode, it can never select
@@ -161,16 +93,22 @@ function KnowledgeAreaFormWithRoot<T>(props: KnowledgeAreaFormWithRootProps<T>):
     }
 
     // Check if there are any name collisions.
-    if (parent.hasChildWithName(name)) {
-      const errorMessage = (
-        parent.isRoot()
-        ? 'There already exists a top-level area matching this name.'
-        : 'There already exists an area matching this name under this parent.'
-      );
+    switch (parent.getChildType(name)) {
+      case 'area':
+        const errorMessage = (
+          parent.isRoot()
+          ? 'There already exists a top-level area matching this name.'
+          : 'There already exists an area matching this name under this parent.'
+        );
       
-      return {
-        name: errorMessage
-      };
+        return {
+          name: errorMessage
+        };
+      
+      case 'topic':
+        return {
+          name: `"${parent.name}" has a child topic with this name, so an area cannot use it.`
+        };
     }
   }
 
@@ -196,13 +134,15 @@ function KnowledgeAreaFormWithRoot<T>(props: KnowledgeAreaFormWithRootProps<T>):
       successAlert={props.successAlert}
       onSubmit={handleSubmit}
     >
-      <FormTextField
+      <TextField
+        formField
         name='name'
         label='Name'
         helperText='Enter the name of the knowledge area'
         placeholder='e.g. Computer Science'
       />
-      <FormTreeSelect
+      <KnowledgeAreaTreeSelect
+        formField
         root={root}
         name='parent'
         label='Parent'
@@ -255,13 +195,13 @@ export default function KnowledgeAreaForm<T>({
       });
     }
     else {
-      root.getChild((node) => (node as KnowledgeAreaTreeNode).id === parentId)
+      root.getChild((node) => node.id === parentId)
         .then((node) => setState({
           root,
           defaultArea: {
             id,
             name,
-            parent: (node as KnowledgeAreaTreeNode) ?? root
+            parent: node ?? root
           }
         }));
     }

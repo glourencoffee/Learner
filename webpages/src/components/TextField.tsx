@@ -1,127 +1,83 @@
-import {
-  TextField as MuiTextField,
-  TextFieldProps as MuiTextFieldProps,
-  TextFieldVariants,
-  Typography
-} from '@mui/material';
-
-export type TextFieldLabelPositions = 'inside' | 'outside';
-
-export type TextFieldProps<
-  Variant extends TextFieldVariants = TextFieldVariants
-> = (
-  MuiTextFieldProps<Variant> & {
-    /**
-     * Where to place the label.
-     * 
-     * @default 'outside'
-     */
-    labelPosition?: TextFieldLabelPositions;
-  }
-);
+import { useField, useFormikContext } from 'formik';
+import BaseTextField, { BaseTextFieldProps } from './BaseTextField';
 
 /**
- * This component extends Material UI `<TextField>` so that its label can be placed
- * outside the input element, since Material UI always places the label inside the
- * input element.
+ * A text field used as a form field provides the prop `formField`, and must:
+ * - provide the prop `name`
+ * - provide neither the props `value`, `onChange`, nor `onBlur`, because
+ *   the form field is uncontrolled from the client's perspective.
+ */
+type TextFieldWithFormFieldProps = (
+  Omit<
+    BaseTextFieldProps,
+    'value'    |
+    'onChange' |
+    'onBlur'
+  > & {
+    formField: true;
+    name: string;
+  }
+)
+
+/**
+ * A text field which is not used as a form field either provides the prop
+ * `formField` as `false` or leaves it `undefined`. The prop `name` is optional.
+ */
+type TextFieldWithoutFormFieldProps = (
+  BaseTextFieldProps & {
+    formField?: false;
+    name?: string;
+  }
+)
+
+export type TextFieldProps = (TextFieldWithFormFieldProps | TextFieldWithoutFormFieldProps)
+
+/**
+ * This component extends `<BaseTextField>` to allow it to be used in a `<Form>` and
+ * access the form's context. To use it as a form field, pass the prop `formField`
+ * as `true`.
  * 
- * If `props.labelPosition` is `'inside'`, behaves similarly to a Material UI
- * `<TextField>`. Otherwise, renders a text field with its label placed outside,
- * on top of the input element.
+ * When used as a form field, it styles the label, input, and helper text elements so
+ * that they get colored when this field has an invalid value on its associated form.
  * 
  * @param props The properties of this component.
  * @returns 
  */
-export default function TextField(props: TextFieldProps): JSX.Element {
-  const {
-    variant,
-    label,
-    labelPosition,
-    required,
-    ...rest
-  } = props;
+export default function TextField({
+  formField,
+  name,
+  ...props
+}: TextFieldProps): JSX.Element {
 
-  let labelElement;
-  const InputLabelProps = rest.InputLabelProps ?? {};
-  const InputProps = rest.InputProps ?? {};
+  if (formField) {
+    const formik = useFormikContext();
+    const [field, meta] = useField(name);
 
-  if (label && labelPosition !== 'inside') {
-    // When used as a label for a Material UI <TextField> with variant
-    // "standard", the <Typography> below results in an unnecessary gap
-    // between the <label> component and the root of the <input> component.
-    // This gap comes in part (see `InputProps` below) from the typography's
-    // line height. Remove it for variant "standard".
-    //
-    // The line height also affects the other variants a little. For them,
-    // adjust it to 1.8.
-    const lineHeight = (variant === 'standard') ? 0 : 1.8;
+    const hasError = Boolean(meta.error);
 
-    labelElement = (
-      <Typography variant='overline' lineHeight={lineHeight}>
-        {label}
-        {required ? ' *' : undefined}
-      </Typography>
+    return (
+      <BaseTextField
+        {...props}
+        name={name}
+        helperText={meta.error || props.helperText}
+
+        InputProps={{
+          error: hasError
+        }}
+        InputLabelProps={{
+          error: hasError
+        }}
+        FormHelperTextProps={{
+          error: hasError
+        }}
+
+        value={field.value}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+      />
     );
-
-    // Show label only as a normal-sized text.
-    InputLabelProps.shrink = false;
-
-    // This shows the required asterisk next to the label's text.
-    // Disable it, because the default asterisk uses the common
-    // font style, not the overline variant (as above). That's
-    // why we are setting our own asterisk above.
-    InputLabelProps.required = false;
-
-    InputLabelProps.sx = {
-      ...InputLabelProps.sx, 
-
-      // Make the label's position follow the parent's component layout.
-      // By default, Material UI uses absolute positioning to lay the
-      // label over the text input area. We don't want that. We want
-      // the label to placed above the input area.
-      position: 'static',
-
-      // Besides using absolute positioning, Material UI transforms the
-      // position of the label so that it is positioned somewhere at the
-      // beginning. This results in a wrong offset effect when `position`
-      // is `'static'`, as set above. So, disable this property as well.
-      transform: 'none',
-
-      // This option will only be meaningful for variant "standard".
-      lineHeight: 1
-    };
-
-    // The variant "standard" adds a top margin in the root div of the
-    // <input> component. This margin is intended to give extra space
-    // for the <label>, which is placed there by absolute positioning.
-    // Since we have defined our label element to static positioning,
-    // this top margin would result in a too long gap between the label
-    // and the input root. Remove it.
-    if (variant === 'standard') {
-      if (InputProps.slotProps === undefined) {
-        InputProps.slotProps = {};
-      }
-
-      if (InputProps.slotProps.root === undefined) {
-        InputProps.slotProps.root = {}
-      }
-
-      const rootStyle = InputProps.slotProps.root.style;
-
-      InputProps.slotProps.root.style = { ...rootStyle, marginTop: 0 };
-    }
   }
   else {
-    labelElement = label;
+    return <BaseTextField name={name} {...props} />;
   }
-
-  return (
-    <MuiTextField
-      {...rest}
-      variant={variant}
-      label={labelElement}
-      InputLabelProps={InputLabelProps}
-      InputProps={InputProps}
-    />
-  );
 }

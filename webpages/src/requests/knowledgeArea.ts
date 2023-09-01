@@ -67,18 +67,18 @@ export async function updateKnowledgeArea({ id, name, parentId }: KnowledgeArea)
   );
 }
 
-interface getChildrenOfKnowledgeAreaOptions {
+export interface GetChildrenOfKnowledgeAreaOptions {
   nameFilter?: string;
   type?: 'area' | 'topic';
 }
 
-interface ChildOfKnowledgeArea {
+export interface ChildOfKnowledgeArea {
   id: number,
   name: string,
   type: 'area' | 'topic';
 }
 
-export async function getChildrenOfKnowledgeArea(areaId: number, options: getChildrenOfKnowledgeAreaOptions = {}):
+export async function getChildrenOfKnowledgeArea(areaId: number, options: GetChildrenOfKnowledgeAreaOptions = {}):
   Promise<ChildOfKnowledgeArea[]> {
 
   const queryParams = {
