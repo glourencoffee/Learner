@@ -1,4 +1,4 @@
-import * as request from './request';
+import * as request from '../requests/request';
 import * as schemas from '../schemas/knowledgeArea';
 import { KnowledgeArea } from '../models/KnowledgeArea';
 
