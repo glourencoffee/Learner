@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import usePromise from 'react-promise-suspense';
 import { nanoid } from 'nanoid';
-import { getTopLevelKnowledgeAreas } from '../../requests/knowledgeArea';
+import { getTopLevelKnowledgeAreas } from '../../api/knowledgeArea';
 import SearchBar from '../../components/SearchBar';
 import AlphabeticPagination from '../../components/AlphabeticPagination';
 

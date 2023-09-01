@@ -3,7 +3,7 @@ import { TreeNode } from './BaseTreeSelect';
 import {
   getChildrenOfKnowledgeArea,
   getTopLevelKnowledgeAreas
-} from '../requests/knowledgeArea';
+} from '../api/knowledgeArea';
 
 type BasePredicateType = (child: TreeNode) => boolean;
 

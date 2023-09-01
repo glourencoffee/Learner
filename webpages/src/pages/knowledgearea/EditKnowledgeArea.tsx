@@ -5,7 +5,7 @@ import KnowledgeAreaForm from '../../components/KnowledgeAreaForm';
 import ProgressBackdrop from '../../components/ProgressBackdrop';
 import SuccessAlertAction from '../../components/SuccessAlertAction';
 import { KnowledgeArea } from '../../models/KnowledgeArea';
-import { getKnowledgeArea, updateKnowledgeArea } from '../../requests/knowledgeArea';
+import { getKnowledgeArea, updateKnowledgeArea } from '../../api/knowledgeArea';
 
 function renderSuccessAlertAction(areaId: number): JSX.Element {
   const viewUrl = `/knowledgearea/${areaId}`;

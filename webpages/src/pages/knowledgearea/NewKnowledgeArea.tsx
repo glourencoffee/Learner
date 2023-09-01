@@ -1,6 +1,6 @@
 import KnowledgeAreaForm from '../../components/KnowledgeAreaForm';
 import SuccessAlertAction from '../../components/SuccessAlertAction';
-import { createKnowledgeArea } from '../../requests/knowledgeArea';
+import { createKnowledgeArea } from '../../api/knowledgeArea';
 import { KnowledgeArea } from '../../models/KnowledgeArea';
 
 function renderSuccessAlertAction(newAreaId: number): JSX.Element {

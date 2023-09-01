@@ -14,7 +14,7 @@ import {
 } from '@mui/icons-material';
 import React, { PropsWithChildren, Suspense, useEffect, useState } from 'react';
 import { Navigate, Params, useLocation, useParams } from 'react-router-dom';
-import { getChildrenOfKnowledgeArea, getKnowledgeArea } from '../../requests/knowledgeArea';
+import { getChildrenOfKnowledgeArea, getKnowledgeArea } from '../../api/knowledgeArea';
 import ProgressBackdrop from '../../components/ProgressBackdrop';
 import { TreeItem, TreeView } from '@mui/lab';
 import { Resource, createResource } from '../../requests/createResource';
