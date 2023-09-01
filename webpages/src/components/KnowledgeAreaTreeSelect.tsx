@@ -1,7 +1,6 @@
 import TreeSelect, { TreeSelectProps, TreeSelectWithFormFieldProps, TreeSelectWithoutFormFieldProps } from './TreeSelect';
 import { TreeNode } from './BaseTreeSelect';
 import {
-  ChildOfKnowledgeArea,
   getChildrenOfKnowledgeArea,
   getTopLevelKnowledgeAreas
 } from '../requests/knowledgeArea';
@@ -14,14 +13,14 @@ type BasePredicateType = (child: TreeNode) => boolean;
 export class KnowledgeAreaTreeNode extends TreeNode {
   public readonly id: number;
   public readonly name: string;
-  private topics: ChildOfKnowledgeArea[];
+  public readonly type?: 'area' | 'topic';
 
-  constructor(id: number, name: string) {
+  constructor(id: number, name: string, type?: 'area' | 'topic') {
     super();
 
     this.id   = id;
     this.name = name;
-    this.topics = [];
+    this.type = type;
   }
   
   /**
@@ -32,24 +31,27 @@ export class KnowledgeAreaTreeNode extends TreeNode {
    */
   async fetchChildren(): Promise<TreeNode[]> {
     const children = await getChildrenOfKnowledgeArea(this.id);
-    const childAreas = [];
-    this.topics = [];
 
-    for (const child of children) {
-      switch (child.type) {
-        case 'area':  childAreas.push(child); break;
-        case 'topic': this.topics.push(child); break;
-      }
-    }
-
-    return childAreas.map((area) => new KnowledgeAreaTreeNode(area.id, area.name));
+    return children.map((child) => new KnowledgeAreaTreeNode(child.id, child.name, child.type));
   }
 
   /**
    * Reimplements `getChildren()` with type semantics of `KnowledgeAreaTreeNode`.
    */
   async getChildren(): Promise<KnowledgeAreaTreeNode[] | null> {
-    return super.getChildren() as Promise<KnowledgeAreaTreeNode[] | null>;
+    if (this.type !== 'area') {
+      return null;
+    }
+    
+    const children = await super.getChildren() as KnowledgeAreaTreeNode[] | null;
+
+    if (children === null) {
+      return null;
+    }
+
+    const filteredChildren = children.filter((child) => child.type === 'area');
+
+    return (filteredChildren.length > 0) ? filteredChildren : null;
   }
 
   /**
@@ -73,29 +75,29 @@ export class KnowledgeAreaTreeNode extends TreeNode {
   }
 
   /**
+   * Reimplements `findChild()` with type semantics of `KnowledgeAreaTreeNode`.
+   */
+  findChild(predicate: (child: KnowledgeAreaTreeNode) => boolean): KnowledgeAreaTreeNode | undefined {
+    return super.findChild(predicate as BasePredicateType) as KnowledgeAreaTreeNode;
+  }
+
+  /**
    * Returns whether `this` has any cached child with name `name`.
    * 
    * @param name A name.
    * @returns Whether `this` has a cached child with `name`.
    */
   hasChildAreaWithName(name: string): boolean {
-    return this.hasChild((child) => child.name.toLowerCase() === name.toLowerCase());
+    return this.hasChild((child) => child.type === 'area' && child.name.toLowerCase() === name.toLowerCase());
   }
 
   hasChildTopicWithName(name: string): boolean {
-    return this.topics.some((child) => child.name.toLowerCase() === name.toLowerCase());
+    return this.hasChild((child) => child.type === 'topic' && child.name.toLowerCase() === name.toLowerCase());
   }
 
   getChildType(name: string): 'area' | 'topic' | undefined {
-    if (this.hasChildAreaWithName(name)) {
-      return 'area';
-    }
-    else if (this.hasChildTopicWithName(name)) {
-      return 'topic';
-    }
-    else {
-      return undefined;
-    }
+    const child = this.findChild((child) => child.name.toLowerCase() === name.toLowerCase());
+    return child?.type;
   }
 
   /**
@@ -121,7 +123,11 @@ export class KnowledgeAreaTreeRootNode extends KnowledgeAreaTreeNode {
    */
   async fetchChildren(): Promise<TreeNode[]> {
     const topLevelAreas = await getTopLevelKnowledgeAreas();
-    return topLevelAreas.map((area) => new KnowledgeAreaTreeNode(area.id, area.name));
+    return topLevelAreas.map((area) => new KnowledgeAreaTreeNode(area.id, area.name, 'area'));
+  }
+
+  async getChildren(): Promise<KnowledgeAreaTreeNode[] | null> {
+    return TreeNode.prototype.getChildren.call(this) as Promise<KnowledgeAreaTreeNode[] | null>;
   }
 }
 

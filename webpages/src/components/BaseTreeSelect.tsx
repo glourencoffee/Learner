@@ -134,6 +134,20 @@ export class TreeNode {
    * @param predicate A predicate to apply on child.
    * @returns Whether `this` has a cached child satisfying a `predicate`.
    */
+  findChild(predicate: (child: TreeNode) => boolean): TreeNode | undefined {
+    if (this.children === undefined) {
+      return undefined;
+    }
+
+    return this.children.find(predicate);
+  }
+
+  /**
+   * Returns whether `this` has any cached child satisfying `predicate`.
+   * 
+   * @param predicate A predicate to apply on child.
+   * @returns Whether `this` has a cached child satisfying a `predicate`.
+   */
   hasChild(predicate: (child: TreeNode) => boolean): boolean {
     if (this.children === undefined) {
       return false;
