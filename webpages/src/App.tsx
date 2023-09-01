@@ -10,6 +10,10 @@ import {
   EditKnowledgeArea,
   ViewKnowledgeArea
 } from './pages/knowledgearea';
+import {
+  EditTopic,
+  NewTopic
+} from './pages/topic';
 
 function renderErrorPage({ error }: FallbackProps): React.ReactNode {
   return <ErrorPage error={error} />;
@@ -45,9 +49,10 @@ export default function App(): JSX.Element {
             </Route>
           </Route>
           <Route path='topic'>
+            <Route path='new'     element={ <NewTopic /> } />
             <Route path=':topicId'>
               <Route index        element={ <UnderConstruction /> } />
-              <Route path='edit'  element={ <UnderConstruction /> } />
+              <Route path='edit'  element={ <EditTopic /> } />
             </Route>
           </Route>
         </Route>
