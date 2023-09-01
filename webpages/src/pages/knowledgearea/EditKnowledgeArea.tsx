@@ -1,22 +1,16 @@
 import { Suspense } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { Button, Stack } from '@mui/material';
 import usePromise from 'react-promise-suspense';
 import KnowledgeAreaForm from '../../components/KnowledgeAreaForm';
 import ProgressBackdrop from '../../components/ProgressBackdrop';
+import SuccessAlertAction from '../../components/SuccessAlertAction';
 import { KnowledgeArea } from '../../models/KnowledgeArea';
 import { getKnowledgeArea, updateKnowledgeArea } from '../../requests/knowledgeArea';
 
 function renderSuccessAlertAction(areaId: number): JSX.Element {
   const viewUrl = `/knowledgearea/${areaId}`;
 
-  return (
-    <Stack direction='row'>
-      <Button href={viewUrl}>
-        View
-      </Button>
-    </Stack>
-  );
+  return <SuccessAlertAction viewUrl={viewUrl} />;
 }
 
 function renderEditKnowledgeAreaForm(areaId: number): JSX.Element {

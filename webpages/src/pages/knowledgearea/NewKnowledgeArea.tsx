@@ -1,5 +1,5 @@
-import { Button, Stack } from '@mui/material';
 import KnowledgeAreaForm from '../../components/KnowledgeAreaForm';
+import SuccessAlertAction from '../../components/SuccessAlertAction';
 import { createKnowledgeArea } from '../../requests/knowledgeArea';
 import { KnowledgeArea } from '../../models/KnowledgeArea';
 
@@ -8,14 +8,10 @@ function renderSuccessAlertAction(newAreaId: number): JSX.Element {
   const editUrl = `/knowledgearea/${newAreaId}/edit`;
 
   return (
-    <Stack direction='row'>
-      <Button href={viewUrl}>
-        View
-      </Button>
-      <Button href={editUrl}>
-        Edit
-      </Button>
-    </Stack>
+    <SuccessAlertAction
+      viewUrl={viewUrl}
+      editUrl={editUrl}
+    />
   );
 }
 
