@@ -190,7 +190,11 @@ Deletes one topic.
 
 #### Url params
 
-None.
+```ts
+{
+  topicId: number
+}
+```
 
 #### Query params
 
