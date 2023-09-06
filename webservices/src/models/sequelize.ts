@@ -1,4 +1,4 @@
-import { ConnectionRefusedError, Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize';
 import config from '../config';
 
 const sequelize = new Sequelize(
@@ -14,29 +14,17 @@ const sequelize = new Sequelize(
 /**
  * Establishes the connection to the database.
  * 
- * @param reconnectIntervalSeconds How many seconds to retry connecting if connection fails.
+ * @throws An exception if connection fails.
  */
-async function connect(reconnectIntervalSeconds = 20) {
+export async function connectToDatabase() {
   try {
     await sequelize.authenticate();
     await sequelize.sync({ alter: true });
   }
   catch (e) {
-    if (e instanceof ConnectionRefusedError) {
-      console.log(
-        `Unable to connect to database '${config.db.database}' at '${config.db.host}'. ` + 
-        `Trying again in ${reconnectIntervalSeconds} seconds...`
-      );
-
-      await new Promise(r => setTimeout(r, reconnectIntervalSeconds * 1000));
-      await connect();
-    }
-    else {
-      throw e;
-    }
+    console.error(`Unable to connect to database '${config.db.database}' at '${config.db.host}'.`);
+    throw e;
   }
 }
-
-connect();
 
 export default sequelize;
