@@ -1,9 +1,26 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from './sequelize';
 import { KnowledgeArea } from './KnowledgeArea';
 
-export const Topic = sequelize.define(
-  'Topic',
+export interface TopicAttributes {
+  id: number;
+  name: string;
+  area_id: number;
+}
+
+export interface TopicCreationAttributes
+         extends Optional<TopicAttributes, 'id'> {}
+
+export class Topic
+     extends Model<TopicAttributes, TopicCreationAttributes>
+  implements TopicAttributes
+{
+  public id!: number;
+  public name!: string;
+  public area_id!: number;
+}
+
+Topic.init(
   {
     /**
      * Identifier of a topic.
@@ -31,6 +48,8 @@ export const Topic = sequelize.define(
     }
   },
   {
+    sequelize,
+
     indexes: [
       {
         /**
@@ -44,7 +63,8 @@ export const Topic = sequelize.define(
     timestamps: false,
     underscored: true,
     freezeTableName: true,
-    tableName: 'topic'
+    tableName: 'topic',
+    modelName: 'Topic'
   }
 );
 

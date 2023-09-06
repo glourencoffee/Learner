@@ -1,8 +1,27 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from './sequelize';
 
-export const KnowledgeArea = sequelize.define(
-  'KnowledgeArea',
+export interface KnowledgeAreaAttributes {
+  id: number;
+  name: string;
+  parent_id: number | null;
+  parent_id_notnull: number;
+}
+
+export interface KnowledgeAreaCreationAttributes
+         extends Optional<Omit<KnowledgeAreaAttributes, 'parent_id_notnull'>, 'id'> {}
+
+export class KnowledgeArea
+     extends Model<KnowledgeAreaAttributes, KnowledgeAreaCreationAttributes>
+  implements KnowledgeAreaAttributes
+{
+  public id!: number;
+  public name!: string;
+  public parent_id!: number | null;
+  public parent_id_notnull!: number;
+}
+
+KnowledgeArea.init(
   {
     /**
      * Identifier of a knowledge area.
@@ -43,6 +62,8 @@ export const KnowledgeArea = sequelize.define(
     }
   },
   {
+    sequelize,
+
     indexes: [
       {
         /**
@@ -56,7 +77,8 @@ export const KnowledgeArea = sequelize.define(
     timestamps: false,
     underscored: true,
     freezeTableName: true,
-    tableName: 'knowledge_area'
+    tableName: 'knowledge_area',
+    modelName: 'KnowledgeArea'
   }
 );
 
@@ -65,7 +87,7 @@ export const KnowledgeArea = sequelize.define(
  */
 KnowledgeArea.hasOne(KnowledgeArea, {
   foreignKey: 'parent_id',
-  as: 'Parent',
+  as: 'parent',
 
   /**
    * If the id of a parent knowledge area changes, just update its
