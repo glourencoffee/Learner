@@ -372,7 +372,7 @@ export async function getChildrenOfKnowledgeArea(req: Request, res: Response): P
   // Sorting is already done at database level. Only sort here
   // at application level if queried from more than one table.
   if (promises.length > 1) {
-    children.sort((a, b) => a.dataValues.name - b.dataValues.name);
+    children.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   res.status(HttpStatusCode.OK).json({ children });
