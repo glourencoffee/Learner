@@ -153,7 +153,7 @@ interface KnowledgeAreaTreeSelectWithoutFormFieldProps extends
   >
 {
   value?: KnowledgeAreaTreeNode;
-  onChange?: (node: KnowledgeAreaTreeNode) => boolean;
+  onChange?: (node: KnowledgeAreaTreeNode) => void;
 }
 
 type KnowledgeAreaTreeSelectProps = (
