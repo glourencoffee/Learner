@@ -1,0 +1,3 @@
+.hide-legend-span > fieldset > legend > span {
+  display: none;
+}

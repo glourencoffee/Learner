@@ -4,6 +4,7 @@ import {
   TextFieldVariants,
   Typography
 } from '@mui/material';
+import './BaseTextField.css';
 
 export type TextFieldLabelPositions = 'inside' | 'outside';
 
@@ -70,8 +71,9 @@ export default function BaseTextField(
       </Typography>
     );
 
-    // Show label only as a normal-sized text.
-    InputLabelProps.shrink = false;
+    // Must be set to `true`. Otherwise, `props.placeholder` is not shown.
+    // See wall-text comment below.
+    InputLabelProps.shrink = true;
 
     // This shows the required asterisk next to the label's text.
     // Disable it, because the default asterisk uses the common
@@ -98,6 +100,14 @@ export default function BaseTextField(
       lineHeight: 1
     };
 
+    if (InputProps.slotProps === undefined) {
+      InputProps.slotProps = {};
+    }
+
+    if (InputProps.slotProps.root === undefined) {
+      InputProps.slotProps.root = {};
+    }
+
     // The variant "standard" adds a top margin in the root div of the
     // <input> component. This margin is intended to give extra space
     // for the <label>, which is placed there by absolute positioning.
@@ -105,18 +115,40 @@ export default function BaseTextField(
     // this top margin would result in a too long gap between the label
     // and the input root. Remove it.
     if (variant === 'standard') {
-      if (InputProps.slotProps === undefined) {
-        InputProps.slotProps = {};
-      }
-
-      if (InputProps.slotProps.root === undefined) {
-        InputProps.slotProps.root = {}
-      }
-
       const rootStyle = InputProps.slotProps.root.style;
 
       InputProps.slotProps.root.style = { ...rootStyle, marginTop: 0 };
     }
+
+    // MUI is not very flexible for positioning a `TextField`'s label
+    // above the text field component. The problem we have here is
+    // wanting to show the placeholder text (`props.placeholder`),
+    // which doesn't get shown when a custom label (`labelElement`)
+    // is used together with the prop `InputLabelProps.shrink` set to
+    // `false`. This is due to the behavior of `InputLabelProps`,
+    // which is described below:
+    // - If `InputLabelProps.shrink` is `false`, the custom label element
+    //   is shown without a problem, but the placeholder is not shown at all.
+    // - If `InputLabelProps.shrink` is `true`, the placeholder is shown,
+    //   but the root element (`InputProps.slotProps.root`) will include
+    //   a `<fieldset>` element with a `<span>` grandchild element. This
+    //   `<span>` causes a bad effect of a blank space being shown.
+    //
+    // When `InputLabelProps.shrink` is `true`, the `<fieldset>` element
+    // is structured as follows:
+    // - `<fieldset>` has `<legend>` child. Removing either `<fieldset>` or
+    //   `<legend>` results in a bad visual effect where `<fieldset>` occupies
+    //   more space than it should. That is, `<TextField>`'s height increases
+    //   beyond its standard. Therefore, both of these elements should be present.
+    // - Under `<legend>`, there is a `<span>` element used as a container.
+    //   If this `<span>` is removed or hidden (`display: none`) entirely,
+    //   the `<TextField>` keeps its standard height and the placeholder is shown.
+    //
+    // This is what the code below is doing: applying a CSS class to hide this
+    // span so that we can have a custom `<TextField>` with *both* an outer label
+    // and a placeholder text.
+    const rootClasses = InputProps.slotProps.root.className ?? '';
+    InputProps.slotProps.root.className = rootClasses + ' hide-legend-span';
   }
   else {
     labelElement = label;
