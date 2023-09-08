@@ -436,6 +436,9 @@ export default function Form<
             <Button
               type='submit'
               title={props.buttonTitle}
+              sx={{
+                alignSelf: 'center'
+              }}
             >
               {props.buttonText ?? 'Submit'}
             </Button>
