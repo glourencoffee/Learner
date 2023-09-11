@@ -284,6 +284,16 @@ export interface BaseTreeSelectProps {
    * @default undefined
    */
   isNodeDisabled?: (node: TreeNode) => boolean;
+
+  /**
+   * Returns whether a branch is selectable.
+   * 
+   * All branches are selectable by default.
+   * 
+   * @param node A tree node.
+   * @default undefined
+   */
+  isBranchSelectable?: (node: TreeNode) => boolean;
 };
 
 interface TreeSelectState {
@@ -430,11 +440,12 @@ export default function BaseTreeSelect(props: BaseTreeSelectProps): JSX.Element 
 
   return (
     <MuiTreeSelect
+      fullWidth
       disabled={disabled}
       getChildren={getNodeChildren}
       getParent={getNodeParent}
       getOptionDisabled={props.isNodeDisabled}
-      isBranchSelectable={() => true}
+      isBranchSelectable={props.isBranchSelectable ?? (() => true)}
       renderInput={renderInput}
       branchDelimiter={props.branchSeparator}
       openOnFocus
