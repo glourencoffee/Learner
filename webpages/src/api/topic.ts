@@ -1,6 +1,7 @@
 import { Topic } from '../models/Topic';
 import * as request from '../requests/request';
 import * as schemas from '../schemas/topic';
+import { getKnowledgeArea } from './knowledgeArea';
 
 interface GetTopicsOptions {
   areaId?: number;
@@ -45,17 +46,37 @@ export async function createTopic(areaId: number, topicName: string): Promise<nu
   return result.topicId;
 }
 
-export async function getTopic(topicId: number): Promise<Topic> {
+export interface GetTopicOptions {
+  withPath?: boolean;
+}
+
+export async function getTopic(topicId: number, options: GetTopicOptions = {}): Promise<Topic> {
   const result = await request.get(
     schemas.getTopicSchema,
     `/topic/${topicId}`
   );
 
-  return {
+  const topic: Topic = {
     id:     result.topicId,
     name:   result.topicName,
     areaId: result.areaId
-  };
+  }
+
+  if (options.withPath) {
+    const path = [];
+    let areaId: number | null = topic.areaId;
+
+    while (areaId !== null) {
+      const area = await getKnowledgeArea(areaId);
+      
+      path.unshift(area.name);
+      areaId = area.parentId;
+    }
+
+    topic.path = path;
+  }
+
+  return topic;
 }
 
 export async function updateTopic(topic: Topic): Promise<void> {

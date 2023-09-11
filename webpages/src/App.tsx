@@ -14,6 +14,10 @@ import {
   EditTopic,
   NewTopic
 } from './pages/topic';
+import {
+  NewQuestion,
+  EditQuestion
+} from './pages/question';
 
 function renderErrorPage({ error }: FallbackProps): React.ReactNode {
   return <ErrorPage error={error} />;
@@ -53,6 +57,13 @@ export default function App(): JSX.Element {
             <Route path=':topicId'>
               <Route index        element={ <UnderConstruction /> } />
               <Route path='edit'  element={ <EditTopic /> } />
+            </Route>
+          </Route>
+          <Route path='question'>
+            <Route path='new'     element={ <NewQuestion /> } />
+            <Route path=':questionId'>
+              <Route index        element={ <UnderConstruction /> } />
+              <Route path='edit'  element={ <EditQuestion /> } />
             </Route>
           </Route>
         </Route>
