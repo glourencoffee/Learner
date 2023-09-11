@@ -120,12 +120,16 @@ export interface FormProps<Values extends FormikValues, SubmitResult> {
   /**
    * The text of the submit button.
    * 
+   * Only applicable if the prop `renderSubmit` is `undefined`.
+   * 
    * @default 'Submit'
    */
   buttonText?: string;
 
   /**
    * The title of the submit button.
+   * 
+   * Only applicable if the prop `renderSubmit` is `undefined`.
    * 
    * @default undefined
    */
@@ -159,6 +163,18 @@ export interface FormProps<Values extends FormikValues, SubmitResult> {
    * @default {}
    */
   failureAlert?: Omit<FormAlertProps<unknown | Error>, 'renderText'>;
+
+  /**
+   * A callback function to render the submit area of this form.
+   * 
+   * If `undefined`, renders a MUI `<Button>` of type `'submit'` with
+   * `buttonText` and `buttonTitle` for the button's text and title,
+   * respectively.
+   * 
+   * @returns A submit element.
+   * @default undefined
+   */
+  renderSubmit?: () => React.ReactElement;
 
   /**
    * A callback function called to perform a form-specific submit action,
@@ -419,6 +435,25 @@ export default function Form<
     validateOnBlur: false
   });
 
+  let submitElement;
+
+  if (props.renderSubmit) {
+    submitElement = props.renderSubmit();
+  }
+  else {
+    submitElement = (
+      <Button
+        type='submit'
+        title={props.buttonTitle}
+        sx={{
+          alignSelf: 'center'
+        }}
+      >
+        {props.buttonText ?? 'Submit'}
+      </Button>
+    );
+  }
+
   //===========
   // Rendering
   //===========
@@ -433,15 +468,7 @@ export default function Form<
             gap='1em'
           >
             {props.children}
-            <Button
-              type='submit'
-              title={props.buttonTitle}
-              sx={{
-                alignSelf: 'center'
-              }}
-            >
-              {props.buttonText ?? 'Submit'}
-            </Button>
+            {submitElement}
           </Stack>
         </FormikForm>
       </FormikProvider>
