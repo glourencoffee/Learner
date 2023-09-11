@@ -178,7 +178,7 @@ export default function KnowledgeAreaForm<T>({
   const [state, setState] = useState<KnowledgeAreaFormState>();
 
   useEffect(() => {
-    const root = new KnowledgeAreaTreeRootNode();
+    const root = new KnowledgeAreaTreeRootNode({ getChildren: 'area-only' });
 
     const id       = defaultArea?.id       ?? NaN;
     const name     = defaultArea?.name     ?? '';

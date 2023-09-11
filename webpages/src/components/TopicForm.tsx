@@ -132,7 +132,7 @@ function TopicFormWithRoot<SubmitResult>({
         name='topicName'
         label='Name'
         helperText='Enter the name of the topic'
-        placeholder='e.g. [TODO]'
+        placeholder='e.g. Variables and Constants'
       />
     </Form>
   )
@@ -151,7 +151,7 @@ export default function TopicForm<SubmitResult>({
   const [state, setState] = useState<TopicFormState>();
 
   useEffect(() => {
-    const root = new KnowledgeAreaTreeRootNode();
+    const root = new KnowledgeAreaTreeRootNode({ getChildren: 'area-only' });
 
     const topicName = defaultValues?.topicName ?? '';
     const areaId    = defaultValues?.areaId    ?? null;
