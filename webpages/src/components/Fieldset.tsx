@@ -1,15 +1,56 @@
 import {
+  Box,
   FormControl,
   FormHelperText,
   FormLabel,
   Stack,
   Typography
 } from '@mui/material';
+import theme from '../theme';
+
+export type FieldsetLabelPositions = 'inside' | 'outside';
 
 export interface FieldsetProps {
+  /**
+   * A label to display with the fieldset.
+   * 
+   * @default undefined
+   */
   label?: string;
+
+  /**
+   * Where to place `props.label`, if provided.
+   * 
+   * @default 'inside'
+   */
+  labelPosition?: FieldsetLabelPositions;
+
+  /**
+   * Whether the component uses all width of its parent.
+   * 
+   * @default false
+   */
+  fullWidth?: boolean;
+
+  /**
+   * A helper text to display below the fieldset.
+   * 
+   * @default undefined
+   */
   helperText?: string;
+
+  /**
+   * Whether to style the component with error colors.
+   * 
+   * @default false
+   */
   error?: boolean;
+
+  /**
+   * Whether to disable the fieldset's padding.
+   * 
+   * @default false
+   */
   disablePadding?: boolean;
 }
 
@@ -25,20 +66,48 @@ export interface FieldsetProps {
  */
 export default function Fieldset(props: React.PropsWithChildren<FieldsetProps>): JSX.Element {
   let labelElement;
+  let legendElement;
 
   if (props.label) {
-    labelElement = (
-      <FormLabel error={props.error}>
-        <Typography
-          variant='overline'
-          color='inherit'
-          lineHeight={1}
-          gutterBottom
+    if (props.labelPosition === 'outside') {
+      labelElement = (
+        <FormLabel error={props.error}>
+          <Typography
+            variant='overline'
+            color='inherit'
+            lineHeight={1}
+            gutterBottom
+            noWrap
+          >
+            {props.label}
+          </Typography>
+        </FormLabel>
+      );
+    }
+    else {
+      legendElement = (
+        <Box
+          component='legend'
+          sx={{
+            position: 'absolute',
+            top: '-14px',
+            left: '9px',
+            backgroundColor: theme.palette.background.default
+          }}
         >
-          {props.label}
-        </Typography>
-      </FormLabel>
-    );
+          <FormLabel error={props.error}>
+            <Typography
+              variant='caption'
+              color='inherit'
+              padding='0 3px'
+              noWrap
+            >
+              {props.label}
+            </Typography>
+          </FormLabel>
+        </Box>
+      );
+    }
   }
   
   let helperTextElement;
@@ -55,7 +124,7 @@ export default function Fieldset(props: React.PropsWithChildren<FieldsetProps>):
   }
 
   return (
-    <FormControl>
+    <FormControl fullWidth={props.fullWidth}>
       {labelElement}
       <Stack
         component='fieldset'
@@ -66,9 +135,10 @@ export default function Fieldset(props: React.PropsWithChildren<FieldsetProps>):
           borderColor: props.error ? 'error.main' : undefined
         }}
         gap='1em'
-        padding={props.disablePadding ? 0 : '1em'}
+        padding={props.disablePadding ? 0 : '0.7em'}
         margin={0}
       >
+        {legendElement}
         {props.children}
       </Stack>
       {helperTextElement}

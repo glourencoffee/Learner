@@ -124,6 +124,7 @@ function OptionsField(): JSX.Element {
     return (
       <Fieldset
         label='Answer Options'
+        labelPosition='outside'
         helperText={error || 'Create answer options and select the correct answer.'}
         error={Boolean(error)}
       >
@@ -153,6 +154,7 @@ function TopicsField(): JSX.Element {
     return (
       <Fieldset
         label='Topics'
+        labelPosition='outside'
         helperText={error || 'Select the associated topics.'}
         error={Boolean(error)}
         disablePadding
