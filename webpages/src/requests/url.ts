@@ -40,7 +40,7 @@ export function makeCompleteUrl(path: string, queryParams?: object) {
   ];
 
   if (queryParams !== undefined) {
-    urlParts.push('?' + queryString.stringify(queryParams));
+    urlParts.push('?' + queryString.stringify(queryParams, { arrayFormat: 'bracket' }));
   }
   
   return urlJoin(urlParts);
