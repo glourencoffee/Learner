@@ -16,7 +16,9 @@ import {
 } from './pages/topic';
 import {
   NewQuestion,
-  EditQuestion
+  EditQuestion,
+  ViewQuestion,
+  ViewQuestions
 } from './pages/question';
 
 function renderErrorPage({ error }: FallbackProps): React.ReactNode {
@@ -42,7 +44,6 @@ export default function App(): JSX.Element {
       <Routes>
         <Route path='/' element={<Layout />}>
           <Route index                 element={<UnderConstruction      />} />
-          <Route path='questions'      element={<UnderConstruction      />} />
           <Route path='stats'          element={<UnderConstruction      />} />
           <Route path='knowledgearea'>
             <Route index          element={ <TopLevelKnowledgeAreas /> } />
@@ -60,9 +61,10 @@ export default function App(): JSX.Element {
             </Route>
           </Route>
           <Route path='question'>
-            <Route path='new'     element={ <NewQuestion /> } />
+            <Route index          element={ <ViewQuestions /> } />
+            <Route path='new'     element={ <NewQuestion   /> } />
             <Route path=':questionId'>
-              <Route index        element={ <UnderConstruction /> } />
+              <Route index        element={ <ViewQuestion /> } />
               <Route path='edit'  element={ <EditQuestion /> } />
             </Route>
           </Route>

@@ -9,7 +9,7 @@ interface NavigationLink {
 const navLinks = [
   {
     title: 'Questions',
-    path: '/questions'
+    path: '/question'
   },
   {
     title: 'Statistics',

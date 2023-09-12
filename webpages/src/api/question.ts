@@ -1,6 +1,38 @@
-import { Question, QuestionWithoutId } from '../models';
+import {
+  DifficultyLevel,
+  Question,
+  QuestionType,
+  QuestionWithoutId
+} from '../models';
 import * as request from '../requests/request';
 import * as schemas from '../schemas/question';
+
+export interface GetQuestionsOptions {
+  questionType?: QuestionType;
+  questionText?: string;
+  difficultyLevels?: DifficultyLevel[];
+  topicIds?: number[];
+}
+
+/**
+ * Makes an API request to query questions.
+ * 
+ * @param options Options for filtering the query.
+ * @returns An array of questions.
+ */
+export async function getQuestions(options: GetQuestionsOptions = {}): Promise<Question[]> {
+  const result = await request.get(
+    schemas.getQuestionsSchema,
+    '/question/',
+    {
+      queryParams: options
+    }
+  );
+
+  return result.questions.map(
+    ({ questionId, ...values }) => ({ id: questionId, ...values })
+  );
+}
 
 /**
  * Makes an API request to create a question.
