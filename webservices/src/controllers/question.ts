@@ -163,7 +163,7 @@ export async function getQuestions(req: Request, res: Response): Promise<any> {
   const {
     questionType,
     questionText,
-    difficultyLevel,
+    difficultyLevels,
     topicIds
   } = query;
 
@@ -180,8 +180,10 @@ export async function getQuestions(req: Request, res: Response): Promise<any> {
     };
   }
 
-  if (difficultyLevel !== undefined) {
-    questionsWhere.difficulty_level = difficultyLevel;
+  if (difficultyLevels !== undefined) {
+    questionsWhere.difficulty_level = {
+      [Op.in]: difficultyLevels
+    };
   }
 
   const topicsWhere: WhereOptions<TopicAttributes> = {};

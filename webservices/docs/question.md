@@ -20,8 +20,8 @@ None.
 
 - `questionType?` ('boolean' | 'multiple-choice'): An optional filter by question type.
 - `questionText?` (string): An optional filter by question text.
-- `difficultyLevel?` ('easy' | 'medium' | 'hard'): An optional filter by difficulty level.
-- `topicIds?` (number[]): An optional filter by topic id.
+- `difficultyLevels?` (array of 'easy' | 'medium' | 'hard'): An optional filter by difficulty levels.
+- `topicIds?` (array of number): An optional filter by topic ids.
 
 #### Body Parameters
 
@@ -44,7 +44,7 @@ None.
 Finds all questions and filters them based on the given query parameters, as follows: 
   - If `questionType` is `'boolean'`, includes only boolean (true-or-false) questions. If it is `'multiple-choice'`, includes only multiple-choice questions. Otherwise, if absent, includes questions of both types.
   - If `questionText` is present and not empty, includes only questions whose text contain the value of that field. Otherwise, if absent, includes questions containing any text.
-  - If `difficultyLevel` is present, includes only questions matching the difficulty level. Otherwise, if absent, includes questions of any difficulty level.
+  - If `difficultyLevels` is present, includes only questions matching the difficulty levels. Otherwise, if absent, includes questions of any difficulty level.
   - If `topicIds` is present, includes only questions which are associated with at least one of the topics in that list. Otherwise, includes questions of all topics.
 
 Finally, returns the questions after filtering is applied. If no filtering is applied, all questions are returned.

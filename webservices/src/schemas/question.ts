@@ -54,10 +54,10 @@ const optionsSchema = (
 
 export const getQuestionsSchema = {
   query: object({
-    questionType:    questionTypeSchema.optional(),
-    questionText:    questionTextSchema.optional(),
-    difficultyLevel: difficultyLevelSchema.optional(),
-    topicIds:        topicIdsSchema.optional()
+    questionType:     questionTypeSchema.optional(),
+    questionText:     questionTextSchema.optional(),
+    difficultyLevels: array().optional().of(difficultyLevelSchema.defined()),
+    topicIds:         topicIdsSchema.optional()
   })
 };
 
