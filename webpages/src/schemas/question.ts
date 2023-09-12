@@ -7,7 +7,7 @@ const questionSchema = object({
   questionText:       string().required(),
   options:            array().required().of(string().required()),
   correctOptionIndex: number().required(),
-  explanationText:    string().required(),
+  explanationText:    string().defined(),
   difficultyLevel:    string().required().oneOf(Object.values(DifficultyLevel)),
   topicIds:           array().required().of(number().required())
 });
