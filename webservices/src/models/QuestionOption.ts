@@ -1,5 +1,6 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { DataTypes, HasOneGetAssociationMixin, Model, Optional } from 'sequelize';
 import sequelize from './sequelize';
+import { Question } from './Question';
 
 export interface QuestionOptionAttributes {
   id: number;
@@ -17,6 +18,8 @@ export class QuestionOption
   public id!: number;
   public text!: string;
   public question_id!: number;
+
+  declare getQuestion: HasOneGetAssociationMixin<Question>;
 }
 
 QuestionOption.init(

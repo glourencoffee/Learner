@@ -10,3 +10,14 @@ export class QuestionNotFoundError extends NotFoundError {
     this.name = 'QuestionNotFoundError';
   }
 }
+
+/**
+ * Thrown if a question option is not found.
+ */
+export class QuestionOptionNotFoundError extends NotFoundError {
+  constructor(optionId: number, details?: any) {
+    super(`There exists no question option with id ${optionId}`, details);
+
+    this.name = 'QuestionOptionNotFoundError';
+  }
+}
