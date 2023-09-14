@@ -1,11 +1,12 @@
 import { Navigate, Params, useLocation, useParams } from 'react-router-dom';
-import { Question as QuestionModel } from '../../models';
+import { Question as QuestionModel, QuestionOption } from '../../models';
 import { Resource, createResource } from '../../requests/createResource';
 import { Suspense, useMemo } from 'react';
 import { getQuestion } from '../../api/question';
 import QuestionSkeleton from '../../components/QuestionSkeleton';
 import { Stack } from '@mui/material';
 import Question from '../../components/Question';
+import { createAnswer } from '../../api/answer';
 
 interface ValidatedParams {
   questionId: number | null;
@@ -26,7 +27,17 @@ interface ViewQuestionResultProps {
 function ViewQuestionResult({ resource }: ViewQuestionResultProps): JSX.Element {
   const question = resource.data.read();
 
-  return <Question {...question} />;
+  async function handleAnswer(option: QuestionOption): Promise<boolean> {
+    const result = await createAnswer(option.id);
+    return result.isCorrectOption;
+  }
+
+  return (
+    <Question
+      {...question}
+      onAnswer={handleAnswer}
+    />
+  );
 }
 
 export default function ViewQuestion(): JSX.Element {

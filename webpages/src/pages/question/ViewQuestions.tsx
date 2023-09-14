@@ -10,10 +10,12 @@ import TopicListSelect from '../../components/TopicListSelect';
 import {
   DifficultyLevel,
   Question as QuestionModel,
+  QuestionOption,
   QuestionType
 } from '../../models';
 import { GetQuestionsOptions, getQuestions } from '../../api/question';
 import { Resource, createResource } from '../../requests/createResource';
+import { createAnswer } from '../../api/answer';
 
 interface SearchBoxValues {
   questionText: string;
@@ -150,11 +152,17 @@ interface ResultProps {
 function Result({ resource }: ResultProps): JSX.Element {
   const questions = resource.data.read();
 
+  async function handleAnswer(option: QuestionOption): Promise<boolean> {
+    const result = await createAnswer(option.id);
+    return result.isCorrectOption;
+  }
+
   const questionElements = questions.map(
     (question) => (
       <Question
         key={question.id}
         {...question}
+        onAnswer={handleAnswer}
       />
     )
   );
