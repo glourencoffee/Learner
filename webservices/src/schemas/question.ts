@@ -2,7 +2,8 @@ import {
   object,
   array,
   number,
-  string
+  string,
+  boolean
 } from 'yup';
 import { DifficultyLevel, QuestionType } from '../models/Question';
 
@@ -83,6 +84,10 @@ export const updateQuestionSchema = {
 export const getQuestionSchema = {
   params: object({
     questionId: number().required()
+  }),
+
+  query: object({
+    isEdition:  boolean().optional()
   })
 };
 

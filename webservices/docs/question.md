@@ -33,7 +33,9 @@ None.
   - `questionId` (number): The unique identifier for the question.
   - `questionType` ('boolean' | 'multiple-choice'): The type of the question, indicating whether it's a boolean or multiple-choice question.
   - `questionText` (string): A Markdown text that users will read to answer the question.
-  - `options` (array of strings): A list of options from which users can choose their answer.
+  - `options` (array of objects): A list of options from which users can choose their answer:
+    - `id` (number): The unique identifier of the option.
+    - `text` (string): The text of the option.
   - `correctOptionIndex` (number): The index of the correct answer within the options array.
   - `explanationText` (string): A Markdown text explaining the question.
   - `difficultyLevel` ('easy' | 'medium' | 'hard'): An indicator of the question's difficulty level.
@@ -175,7 +177,7 @@ Retrieves one question.
 
 #### Query Parameters
 
-None.
+- `isEdition?` (boolean): Whether question data is used for edition.
 
 #### Body Parameters
 
@@ -186,8 +188,10 @@ None.
 - `questionId` (number): The unique identifier for the question.
 - `questionType` ('boolean' | 'multiple-choice'): The type of the question, indicating whether it's a boolean or multiple-choice question.
 - `questionText` (string): A Markdown text that users will read to answer the question.
-- `options` (array of strings): A list of options from which users can choose their answer.
-- `correctOptionIndex` (number): The index of the correct answer within the options array.
+- `options` (array of objects): A list of options from which users can choose their answer:
+  - `id` (number): The unique identifier of the option.
+  - `text` (string): The text of the option.
+- `correctOptionIndex?` (number): The index of the correct answer within the options array.
 - `explanationText` (string): A Markdown text explaining the question.
 - `difficultyLevel` ('easy' | 'medium' | 'hard'): An indicator of the question's difficulty level.
 - `topicIds` (array of numbers): An array of IDs identifying the topics associated with the question.
@@ -199,7 +203,7 @@ None.
 
 ### Details
 
-If no error was raised, returns a 200 OK with the data of the question identified by `{questionId}`.
+If no error was raised, returns a 200 OK with the data of the question identified by `{questionId}`. The response field `correctOptionIndex` is only present if the query parameter `isEdition` is `true`.
 
 <!----------------------------------------------------------
 -- DELETE method
@@ -209,7 +213,7 @@ If no error was raised, returns a 200 OK with the data of the question identifie
 
 ### Description
 
-Deletes one topic.
+Deletes one question.
 
 ### Request
 

@@ -131,9 +131,16 @@ async function findFirstInvalidTopicOf(topicIds: number[]): Promise<number | und
  * @param question A question instance.
  * @returns A question object to be sent over.
  */ 
-async function toResponseQuestionObject(question: Question) {
-  const questionOptions    = question.options.map((option) => option.text);
-  const correctOptionIndex = question.options.findIndex((option) => option.id === question.correct_option_id);
+async function toResponseQuestionObject(question: Question, isEdition: boolean) {
+  const questionOptions = question.options.map(
+    ({ id, text }) => ({ id, text })
+  );
+
+  let correctOptionIndex;
+  
+  if (isEdition) {
+    correctOptionIndex = question.options.findIndex((option) => option.id === question.correct_option_id);
+  }
 
   const questionTopics   = await question.getTopics();
   const questionTopicIds = questionTopics.map((topic) => topic.id);
@@ -224,7 +231,7 @@ export async function getQuestions(req: Request, res: Response): Promise<any> {
   
   // Map results from query to API response.
   for (const question of questions) {
-    mappedQuestions.push(await toResponseQuestionObject(question));
+    mappedQuestions.push(await toResponseQuestionObject(question, false));
   }
 
   return res.status(HttpStatusCode.OK).json({ questions: mappedQuestions });
@@ -372,9 +379,13 @@ export async function getQuestion(req: Request, res: Response): Promise<any> {
 
   // Validate request data.
   const params = schema.params.validateSync(req.params);
+  const query  = schema.query.validateSync(req.query);
 
   // Prepare data for usage.
   const { questionId } = params;
+  const {
+    isEdition = false
+  } = query;
 
   // Find question.
   const question = await Question.findByPk(questionId, {
@@ -402,7 +413,7 @@ export async function getQuestion(req: Request, res: Response): Promise<any> {
     throw new exceptions.QuestionNotFoundError(questionId, details);
   }
 
-  const responseData = await toResponseQuestionObject(question);
+  const responseData = await toResponseQuestionObject(question, isEdition);
 
   return res.status(HttpStatusCode.OK).json(responseData);
 }
