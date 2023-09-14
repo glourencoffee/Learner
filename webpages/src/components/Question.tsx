@@ -10,6 +10,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 import {
   DifficultyLevel,
+  QuestionOption as QuestionOptionModel,
   QuestionType,
   QuestionWithoutId,
   getQuestionType
@@ -139,12 +140,13 @@ const QuestionBox = ({ questionId, questionText }: QuestionBoxProps) =>
   </Stack>
 );
 
+type AnswerStatus = 'unanswered' | 'correct-answered' | 'incorrect-answered';
+
 interface AnswerBoxProps {
-  options: string[];
-  correctOptionIndex: number;
-  selectedOptionIndex?: number;
-  answered: boolean;
-  onOptionClick?: (index: number) => void;
+  options: QuestionOptionModel[];
+  selectedOption?: QuestionOptionModel;
+  answerStatus: AnswerStatus;
+  onOptionClick?: (option: QuestionOptionModel) => void;
 }
 
 /**
@@ -153,30 +155,33 @@ interface AnswerBoxProps {
  */
 function AnswerBox({
   options,
-  correctOptionIndex,
-  selectedOptionIndex,
-  answered,
+  selectedOption,
+  answerStatus,
   onOptionClick
 }: AnswerBoxProps): JSX.Element {
 
-  function renderOption(optionText: string, index: number): JSX.Element {
+  function renderOption(option: QuestionOptionModel, index: number): JSX.Element {
     let optionColor: QuestionOptionColor | undefined;
     
-    if (index === selectedOptionIndex) {
-      if (!answered) {
-        optionColor= 'selected';
-      }
-      else if (index === correctOptionIndex) {
-        optionColor = 'correct';
-      }
-      else {
-        optionColor = 'incorrect';
+    if (option === selectedOption) {
+      switch (answerStatus) {
+        case 'unanswered':
+          optionColor = 'selected';
+          break;
+       
+        case 'correct-answered':
+          optionColor = 'correct';
+          break;
+          
+        case 'incorrect-answered':
+          optionColor = 'incorrect';
+          break;
       }
     }
 
     const label = (
       <Typography>
-        {optionText}
+        {option.text}
       </Typography>
     );
 
@@ -187,8 +192,8 @@ function AnswerBox({
         index={index}
         color={optionColor}
         backgroundColor={optionColor || 'default'}
-        disabled={answered}
-        onClick={() => onOptionClick?.(index)}
+        disabled={answerStatus !== 'unanswered'}
+        onClick={() => onOptionClick?.(option)}
       />
     );
   }
@@ -289,12 +294,12 @@ const ExplanationBox = ({ text, visible }: ExplanationBoxProps) =>
 );
 
 interface QuestionState {
-  answered: boolean;
-  selectedOptionIndex?: number;
+  answerStatus: AnswerStatus;
+  selectedOption?: QuestionOptionModel;
   isExplaining?: boolean;
 }
 
-export interface QuestionProps extends QuestionWithoutId {
+export interface QuestionProps extends Omit<QuestionWithoutId, 'correctOptionIndex'> {
   /**
    * An optional id of a question.
    * 
@@ -304,6 +309,15 @@ export interface QuestionProps extends QuestionWithoutId {
    * @default undefined
    */
   id?: number;
+
+  /**
+   * A callback function called when the answer button is clicked.
+   * 
+   * @param option The option currently selected.
+   * @param index The index of the option currently selected.
+   * @returns `true` if the selected option is correct, and `false` otherwise.
+   */
+  onAnswer?: (option: QuestionOptionModel, index: number) => boolean | Promise<boolean>;
 }
 
 /**
@@ -313,28 +327,44 @@ export interface QuestionProps extends QuestionWithoutId {
  * @param props The properties of this component.
  */
 export default function Question(props: QuestionProps): JSX.Element {
-  const question = props;
+  const { onAnswer, ...question} = props;
 
   const [state, setState] = useState<QuestionState>({
-    answered: false
+    answerStatus: 'unanswered'
   });
+
+  const optionTexts  = question.options.map((option) => option.text);
+  const questionType = getQuestionType(optionTexts);
   
-  function handleOptionClick(index: number): void {
-    if (!state.answered) {
-      setState({...state, selectedOptionIndex: index});
+  function handleOptionClick(option: QuestionOptionModel): void {
+    if (state.answerStatus === 'unanswered') {
+      setState({...state, selectedOption: option});
     }
   }
 
   function handleMainButtonClick(): void {
-    if (state.answered) {
+    if (state.answerStatus !== 'unanswered') {
       setState({
-        answered: false,
-        selectedOptionIndex: undefined,
+        answerStatus: 'unanswered',
+        selectedOption: undefined,
         isExplaining: false
       });
     }
-    else {
-      setState({...state, answered: true});
+    else if (state.selectedOption && onAnswer) {
+      const selectedOptionIndex = question.options.indexOf(state.selectedOption);
+      const result = onAnswer(state.selectedOption, selectedOptionIndex);
+
+      Promise.resolve(result)
+        .then(
+          (isCorrectAnswer) => setState({
+            ...state,
+            answerStatus: (
+              isCorrectAnswer
+              ? 'correct-answered'
+              : 'incorrect-answered'
+            )
+          })
+        );
     }
   }
 
@@ -342,8 +372,11 @@ export default function Question(props: QuestionProps): JSX.Element {
     setState({...state, isExplaining: true});
   }
 
-  const mainButtonDisabled = !state.answered && state.selectedOptionIndex === undefined;
-  const mainButtonText = (state.answered) ? 'Retry' : 'Answer';
+  const mainButtonDisabled = (
+    state.answerStatus === 'unanswered' &&
+    state.selectedOption === undefined
+  );
+  const mainButtonText = (state.answerStatus === 'unanswered') ? 'Answer' : 'Retry';
 
   let explanationBoxVisible;
   let explanationButtonVisible;
@@ -351,7 +384,7 @@ export default function Question(props: QuestionProps): JSX.Element {
   if (state.isExplaining && question.explanationText.length > 0) {
     explanationBoxVisible = true;
   }
-  else if (state.answered && question.explanationText.length > 0) {
+  else if (state.answerStatus !== 'unanswered' && question.explanationText.length > 0) {
     explanationButtonVisible = true;
   }
 
@@ -367,7 +400,7 @@ export default function Question(props: QuestionProps): JSX.Element {
       }}
     >
       <ChipBox
-        questionType={getQuestionType(question.options)}
+        questionType={questionType}
         difficultyLevel={question.difficultyLevel}
         topicIds={question.topicIds}
       />
@@ -377,9 +410,8 @@ export default function Question(props: QuestionProps): JSX.Element {
       />
       <AnswerBox
         options={question.options}
-        correctOptionIndex={question.correctOptionIndex}
-        selectedOptionIndex={state.selectedOptionIndex}
-        answered={state.answered}
+        selectedOption={state.selectedOption}
+        answerStatus={state.answerStatus}
         onOptionClick={handleOptionClick}
       />
       <ButtonBox

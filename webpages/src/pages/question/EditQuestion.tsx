@@ -70,7 +70,7 @@ export default function EditQuestion(): JSX.Element {
     return (
       questionId === null
       ? null
-      : createResource(getQuestion(questionId))
+      : createResource(getQuestion(questionId, { isEdition: true }))
     );
   }
 

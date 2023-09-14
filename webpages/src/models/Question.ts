@@ -9,11 +9,16 @@ export enum DifficultyLevel {
   HARD   = 'hard'
 }
 
+export interface QuestionOption {
+  id: number;
+  text: string;
+}
+
 export interface Question {
   id: number;
   questionText: string;
-  options: string[];
-  correctOptionIndex: number;
+  options: QuestionOption[];
+  correctOptionIndex?: number;
   difficultyLevel: DifficultyLevel;
   topicIds: number[];
   explanationText: string;

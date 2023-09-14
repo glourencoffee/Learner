@@ -20,7 +20,8 @@ import Form, { FormProps } from './Form';
 import TextField from './TextField';
 import {
   DifficultyLevel,
-  QuestionWithoutId
+  QuestionWithoutId,
+  QuestionOption as QuestionOptionModel
 } from '../models';
 import Question from './Question';
 import QuestionOption from './QuestionOption';
@@ -35,8 +36,8 @@ function OptionsField(): JSX.Element {
 
   const { options, correctOptionIndex } = formik.values;
 
-  function renderOption(arrayHelpers: ArrayHelpers<string[]>,
-                        option: string,
+  function renderOption(arrayHelpers: ArrayHelpers<QuestionOptionModel[]>,
+                        option: QuestionOptionModel,
                         index: number): JSX.Element
   {
     const removeButtonAdornment = (
@@ -66,8 +67,8 @@ function OptionsField(): JSX.Element {
         variant='standard'
         fullWidth
         placeholder={placeholder}
-        value={option}
-        onChange={(event) => arrayHelpers.replace(index, event.target.value)}
+        value={option.text}
+        onChange={(event) => arrayHelpers.replace(index, {...option, text: event.target.value})}
         InputProps={{
           endAdornment: removeButtonAdornment
         }}
@@ -98,7 +99,7 @@ function OptionsField(): JSX.Element {
     );
   }
 
-  function renderGroup(arrayHelpers: ArrayHelpers<string[]>): JSX.Element {
+  function renderGroup(arrayHelpers: ArrayHelpers<QuestionOptionModel[]>): JSX.Element {
     const optionElements = options.map(
       (option, index) => (
         <Collapse key={index}>
@@ -112,7 +113,10 @@ function OptionsField(): JSX.Element {
     if (options.length < 5) {
       addOptionButton = (
         <Button
-          onClick={() => arrayHelpers.push('')}
+          onClick={() => arrayHelpers.push({
+            id: options.length + 1,
+            text: ''
+          })}
         >
           Add option
         </Button>
@@ -231,9 +235,16 @@ function EditModeQuestionForm(): JSX.Element {
 function ViewModeQuestionForm(): JSX.Element {
   const formik = useFormikContext<QuestionFormValues>();
 
+  function handleAnswer(_: QuestionOptionModel, index: number): boolean {
+    return (formik.values.correctOptionIndex === index);
+  }
+
   return (
     <Stack gap='1em'>
-      <Question {...formik.values} />
+      <Question
+        {...formik.values}
+        onAnswer={handleAnswer}
+      />
     </Stack>
   );
 }
@@ -251,7 +262,7 @@ function validateForm({
   }
 
   for (const option of options) {
-    if (option.length === 0) {
+    if (option.text.length === 0) {
       return {
         options: 'An option must not be empty.'
       };
@@ -303,7 +314,16 @@ export default function QuestionForm<SubmitResult>({
 
   const initialValues = defaultValues ?? {
     questionText: '',
-    options: ['', ''],
+    options: [
+      {
+        id: 0,
+        text: ''
+      },
+      {
+        id: 1,
+        text: ''
+      }
+    ],
     correctOptionIndex: 0,
     explanationText: '',
     difficultyLevel: DifficultyLevel.MEDIUM,

@@ -52,16 +52,23 @@ export async function createQuestion(values: QuestionWithoutId): Promise<number>
   return result.questionId;
 }
 
+export interface GetQuestionOptions {
+  isEdition?: boolean;
+}
+
 /**
  * Makes an API requests to retrieve information of a question.
  * 
  * @param id The id of a question.
  * @returns A question.
  */
-export async function getQuestion(id: number): Promise<Question> {
+export async function getQuestion(id: number, options: GetQuestionOptions = {}): Promise<Question> {
   const result = await request.get(
     schemas.getQuestionSchema,
-    `/question/${id}`
+    `/question/${id}`,
+    {
+      queryParams: options
+    }
   );
 
   const {
