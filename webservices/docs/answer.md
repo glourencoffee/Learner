@@ -74,6 +74,10 @@ None.
   - `isCorrect` (boolean): Whether the answer is correct.
   - `createdAt` (number): The timestamp for when the answer was created.
 
+### Error Handling
+
+None.
+
 ### Details
 
 Finds all answers. If the parameter `questionId` is present, filters them to include only answers associated with the question identified by `questionId`.

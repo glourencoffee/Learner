@@ -12,27 +12,30 @@ Creates a top-level knowledge area.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
 None.
 
-#### Query params
+#### Query Parameters
 
 None.
 
-#### Body params
+#### Body Parameters
 
-- *`name`*`: `**`string`**
+- `name` (string): The name of a knowledge area.
 
 ### Response
 
-- *`id`*`: `**`number`**
+- `id` (number): A unique identifier for the newly-created knowledge area.
+
+### Error Handling
+
+- Returns a 409 Conflict response if:
+  - `name` case-insensitively matches the name of any top-level knowledge area.
 
 ### Details
 
-Case-insensitively compares *`name`* to the name of each existing top-level knowledge area. If a match is found, raises `ConflictError`.
-
-Otherwise, creates a top-level knowledge area with name *`name`* and returns the id of that knowledge area.
+If no error was raised, creates a top-level knowledge area with name *`name`* and returns a 201 Created with the id of that knowledge area.
 
 ### Example
 
@@ -80,29 +83,33 @@ Retrieves top-level knowledge areas.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
 None.
 
-#### Query params
+#### Query Parameters
 
-- *`nameFilter?`*`: `**`string`**
+- `nameFilter?` (string): The name of a knowledge area to filter by. Optional.
 
-#### Body params
+#### Body Parameters
 
 None.
 
 ### Response
 
-- *`areas`*`: `**`object[]`**
-  - *`id`*`: `**`number`**
-  - *`name`*`: `**`string`**
+- `areas` (array of objects): An array containing top-level knowledge area objects with the following properties:
+  - `id` (number): The ID of the top-level knowledge area.
+  - `name` (string): The name of the top-level knowledge area.
+
+### Error Handling
+
+None.
 
 ### Details
 
-If *`nameFilter`* is absent or empty, returns all top-level knowledge areas.
+Finds all top-level knowledge areas. If *`nameFilter`* is present and not empty, filters in only the areas whose name case-insensitively includes the expression *`nameFilter`*.
 
-Otherwise, finds and returns all top-knowledge areas whose name case-insensitively includes *`nameFilter`*.
+Finally, the route returns a 200 OK with the areas.
 
 ### Example
 
@@ -150,29 +157,34 @@ Creates a child knowledge area.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
-- *`{id}`*`: `**`number`**
+- `id` (number): The ID of a parent knowledge area.
 
-#### Query params
+#### Query Parameters
 
 None.
 
-#### Body params
+#### Body Parameters
 
-- *`name`*`: `**`string`**
+- `name` (string): The name of the child knowledge area.
 
 ### Response
 
-- *`id`*`: `**`number`**
+- `id` (number): A unique identifier for the newly-created child knowledge area.
+
+### Error Handling
+
+- Returns a 404 Not Found response if:
+  - `id` does not identify a valid knowledge area.
+- Returns a 409 Conflict response if:
+  - The parent knowledge area identified by `id` already has a child with a name matching `name`.
 
 ### Details
 
-If *`{id}`* does not identify an existing knowledge area, raises `NotFoundError`.
+If no error was raised, creates a knowledge area with name *`name`* as a child of the parent knowledge area identified by `id`.
 
-Otherwise, case-insensitively compares *`name`* to the name of each child of the knowledge area identified by `{id}`. If a match is found, raises `ConflictError`.
-
-Otherwise, creates a knowledge area with name *`name`* as a child of that parent knowledge area and returns the id of the new knowledge area.
+Finally, the route returns a 201 Created with the id of the child knowledge area.
 
 ### Example
 
@@ -212,7 +224,7 @@ The response received is:
 -- PUT method (toplevel and parented)
 ----------------------------------------------------------->
 
-## `/knowledgearea/`*`{id}`* (PUT)
+## `/knowledgearea/{id}` (PUT)
 
 ### Description
 
@@ -220,40 +232,41 @@ Updates a knowledge area.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
-- *`{id}`*`: `**`number`**
+- `id` (number): The ID of a knowledge area.
 
-#### Query params
+#### Query Parameters
 
 None.
 
-#### Body params
+#### Body Parameters
 
-- *`name`*`: `**`string`**
-- *`parentId`*`: `**`number | null`**
+- `name` (string): The new name of the knowledge area.
+- `parentId` (number | null): The new parent of the knowledge area.
 
 ### Response
 
 None.
 
+### Error Handling
+
+- Returns a 400 Bad Request response if:
+  - `parentId` is `number` and is same as `id`.
+- Returns a 404 Not Found response if:
+  - `id` does not identify a valid knowledge area.
+  - `parentId` is `number` and does not identify a valid knowledge area.
+- Returns a 409 Conflict response if:
+  - `parentId` is `null` and `name` is already used by another top-level knowledge area.
+  - `parentId` is `number` and `name` is already used by another child of the knowledge area identified by `parentId`.
+
 ### Details
 
-If *`{id}`* does not identify an existing knowledge area, raises `NotFoundError`.
+If no error was raised, updates the knowledge area identified by `id` so that its name is `name` and:
+  - if `parentId` is `null`, it becomes a top-level knowledge area, or
+  - if `parentId` is `number`, it becomes a child of the knowledge area identified by `parentId`.
 
-If the value type of *`parentId`* is `null`, behaves as follows:
-- If *`name`* is already used by another top-level knowledge area, raises `ConflictError`.
-- Otherwise, updates the knowledge area identified by *`{id}`* so that:
-  - its name becomes *`name`*, and
-  - it has no parent, becoming a top-level knowledge area.
-
-Conversely, if the value type of *`parentId`* is `number`, behaves as follows:
-- If *`parentId`* does not identify an existing knowledge area, raises `NotFoundError`.
-- If *`parentId`* is same as *`{id}`*, raises `BadRequestError`.
-- If *`name`* is already used by another child of the knowledge area identified by *`parentId`*, raises `ConflictError`.
-- Otherwise, if no exception was raised, updates the knowledge area identified by *`{id}`* so that:
-  - its name becomes *`name`*, and
-  - it becomes a child of the knowledge area identified by *`parentId`*.
+Finally, the route returns a 200 OK.
 
 ### Example
 
@@ -272,7 +285,7 @@ The response received has status 200, indicating that the request succeeded.
 -- GET method (single)
 ----------------------------------------------------------->
 
-## `/knowledgearea/`*`{id}`* (GET)
+## `/knowledgearea/{id}` (GET)
 
 ### Description
 
@@ -280,29 +293,32 @@ Retrieves one knowledge area.
 
 ### Request 
 
-#### Url params
+#### URL Parameters
 
-- *`{id}`*`: `**`number`**
+- `id` (number): The ID of a knowledge area.
 
-#### Query params
+#### Query Parameters
 
 None.
 
-#### Body params
+#### Body Parameters
 
 None.
 
 ### Response
 
-- *`id`*`: `**`number`**
-- *`name`*`: `**`string`**
-- *`parentId`*`: `**`number | null`**
+- `id` (number): The ID of the knowledge area.
+- `name` (string): The name of the knowledge area.
+- `parentId` (number | null): The parent of knowledge area, if any.
+
+### Error Handling
+
+- Returns a 404 Not Found response if:
+  - `id` does not identify a valid knowledge area.
 
 ### Details
 
-If *`{id}`* does not identify an existing knowledge area, raises `NotFoundError`.
-
-Otherwise, returns the information of the knowledge area identified by *`{id}`*.
+If no error was raised, returns a 200 OK with the knowledge area identified by `id`.
 
 ### Example
 
@@ -322,19 +338,23 @@ The response received is:
 -- GET method (single)
 ----------------------------------------------------------->
 
-## `/knowledgearea/`*`{id}`* (DELETE)
+## `/knowledgearea/{id}` (DELETE)
+
+### Description
+
+Removes a knowledge area.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
-- *`{id}`*`: `**`number`**
+- `id` (number): The ID of a knowledge area.
 
-#### Query params
+#### Query Parameters
 
 None.
 
-#### Body params
+#### Body Parameters
 
 None.
 
@@ -342,23 +362,24 @@ None.
 
 None.
 
-### Description
+### Error Handling
 
-Removes a knowledge area.
+- Returns a 404 Not Found response if:
+  - `id` does not identify a valid knowledge area.
+- Returns a 405 Method Not Allowed response if:
+  - The knowledge area identified by `id` has children.
 
 ### Details
 
-If *`{id}`* does not identify an existing knowledge area, raises `NotFoundError`.
+If no error was raised, removes the knowledge area identified by `id`.
 
-If the knowledge area identified by *`{id}`* has any children, raises `MethodNotAllowedError`.
-
-Otherwise, removes that knowledge area.
+Finally, the route returns a 204 No Content.
 
 <!----------------------------------------------------------
 -- GET method (many parented)
 ----------------------------------------------------------->
 
-## `/knowledgearea/`*`{id}`*`/children` (GET)
+## `/knowledgearea/{id}/children` (GET)
 
 ### Description
 
@@ -366,35 +387,38 @@ Retrieves the children of a knowledge area.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
-- *`{id}`*`: `**`number`**
+- `id` (number): The ID of a knowledge area.
 
-#### Query params
+#### Query Parameters
 
-- *`nameFilter?`*`: `**`string`**
-- *`type?`*`: `**`'area' | 'topic'`**
+- `nameFilter?` (string): The name of children to filter by. Optional.
+- `type?` ('area' | 'topic'): The type of children to filter by. Optional.
 
-#### Body params
+#### Body Parameters
 
 None.
 
 ### Response
 
-- *`children`*`: `**`object[]`**
-  - *`id`*`: `**`number`**
-  - *`name`*`: `**`string`**
-  - *`type`*`: `**`'area' | 'topic'`**
+- `children` (array of objects): An array containing child objects with the following properties:
+  - `id` (number): The ID of the child.
+  - `name` (string): The name of the child.
+  - `type` ('area' | 'topic'): The type of the child, which is `'area'` if the child is a knowledge area or `'topic'` if the child is a topic.
+
+### Error Handling
+
+- Returns a 404 Not Found response if:
+  - `id` does not identify a valid knowledge area.
 
 ### Details
 
-If *`{id}`* does not identify an existing knowledge area, raises `NotFoundError`.
+If no error was raised, finds all children of the knowledge area identified by `id`, and behaves as follows:
+- If `nameFilter` is present and not empty, filters in only the children whose name case-insensitively includes `nameFilter`.
+- If `type` is present, filters in only the children of that given `type`.
 
-Otherwise, finds all children of the knowledge area identified by *`{id}`*, and behaves as follows:
-- If *`nameFilter`* is present and not empty, filters in the children whose
-  name case-insensitively includes *`nameFilter`*.
-- If *`type`* is present, filters in the children whose type is same as represented by *`type`*.
-- Returns the filtered-in children, or all children if no filter was given.
+Finally, the route returns a 200 OK with the children.
 
 ### Example
 

@@ -12,41 +12,35 @@ Retrieves zero or more topics.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
 None.
 
-#### Query params
+#### Query Parameters
 
-```ts
-{
-  areaId?: number
-  topicName?: string
-}
-```
+- `areaId?` (number): The ID of a knowledge area to filter by. Optional.
+- `topicName?` (string): The name of a topic to filter by. Optional.
 
-#### Body params
+#### Body Parameters
 
 None.
 
 ### Response
 
-```ts
-{
-  topics: {
-    areaId: number
-    topicId: number
-    topicName: string
-  }[]
-}
-```
+- `topics` (array of objects): An array containing topic objects with the following properties:
+  - `areaId` (number): The ID of the knowledge area which the topic belongs to.
+  - `topicId` (number): The ID of the topic.
+  - `topicName` (string): The name of the topic.
+
+### Error Handling
+
+None.
 
 ### Details
 
-Finds all existing topics, optionally filters them by `areaId` and `topicName` if these fields are present, and returns them.
+Finds all topics and filters them by `areaId` and `topicName` if these parameters are present. If these parameters are absent, no filtering is applied.
 
-If `areaId` is absent or invalid, returns all topics.
-
+Finally, returns a 200 OK with the topics.
 
 <!----------------------------------------------------------
 -- POST method 
@@ -60,36 +54,33 @@ Creates a topic.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
 None.
 
-#### Query params
+#### Query Parameters
 
 None.
 
-#### Body params
+#### Body Parameters
 
-```ts
-{
-  areaId: number
-  topicName: string
-}
-```
+- `areaId` (number): The ID of a knowledge area.
+- `topicName` (string): The name of the new topic.
 
 ### Response
 
-```ts
-{
-  topicId: number
-}
-```
+- `topicId` (number): A unique identifier for the newly-created topic.
+
+### Error Handling
+
+- Returns a 409 Conflict response if:
+  - `topicName` case-insensitively matches the name of any child of the knowledge area identified by `areaId`.
 
 ### Details
 
-Case-insensitively compares `topicName` to the name of each child of the knowledge area identified by `areaId`. If a match is found, raises `ConflictError`.
+If no error was raised, creates a topic with name `topicName` under the knowledge area identified by `areaId`.
 
-Otherwise, creates a topic with name `topicName` under `areaId` and returns the id of that topic.
+Finally, returns a 201 Created with the id of that topic.
 
 <!----------------------------------------------------------
 -- PUT method 
@@ -103,34 +94,36 @@ Updates a topic.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
-```ts
-{
-  topicId: number
-}
-```
+- `topicId` (number): The ID of a topic.
 
-#### Query params
+#### Query Parameters
 
 None.
 
-#### Body params
+#### Body Parameters
 
-```ts
-{
-  areaId: number
-  topicName: string
-}
-```
+- `areaId` (number): The ID of a knowledge area.
+- `topicName` (string): The name of the new topic.
+
+### Response
+
+None.
+
+### Error Handling
+
+- Returns a 404 Not Found response if:
+  - `topicId` does not identify a valid topic.
+  - `areaId` does not identify a valid knowledge area.
+- Returns a 409 Conflict response if:
+  - `topicName` case-insensitively matches the name of any child of the knowledge area identified by `areaId`.
 
 ### Details
 
-If `topicId` does not identify an existing topic or if `areaId` does not identify an existing knowledge area, raises `NotFoundError`.
+If no error was raised, updates the topic identified by `topicId` so that its name is `topicName` and that it becomes a child of the knowledge area identified by `areaId`.
 
-If that knowledge area has another child whose name case-insensitively matches `topicName`, raises `ConflictError`.
-
-Otherwise, if no exception was raised, changes that topic's name to `topicName` and makes it a child of `areaId`.
+Finally, the route returns a 200 OK.
 
 <!----------------------------------------------------------
 -- GET method (single)
@@ -144,37 +137,32 @@ Retrieves one topic.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
-```ts
-{
-  topicId: number
-}
-```
+- `topicId` (number): The ID of a topic.
 
-#### Query params
+#### Query Parameters
 
 None.
 
-#### Body params
+#### Body Parameters
 
 None.
 
 ### Response
 
-```ts
-{
-  areaId: number
-  topicId: number
-  topicName: string
-}
-```
+- `areaId` (number): The ID of a knowledge area.
+- `topicId` (number): The ID of a topic.
+- `topicName` (string): The name of the new topic.
+
+### Error Handling
+
+- Returns a 404 Not Found response if:
+  - `topicId` does not identify a valid topic.
 
 ### Details
 
-If `{topicId}` does not identify an existing topic, raises `NotFoundError`.
-
-Otherwise, returns the data of the topic identified by `{topicId}`.
+If no error was raised, returns a 200 OK with the topic identified by `topicId`.
 
 <!----------------------------------------------------------
 -- DELETE method (single)
@@ -188,19 +176,15 @@ Deletes one topic.
 
 ### Request
 
-#### Url params
+#### URL Parameters
 
-```ts
-{
-  topicId: number
-}
-```
+- `topicId` (number): The ID of a topic.
 
-#### Query params
+#### Query Parameters
 
 None.
 
-#### Body params
+#### Body Parameters
 
 None.
 
@@ -208,8 +192,11 @@ None.
 
 None.
 
+### Error Handling
+
+- Returns a 404 Not Found response if:
+  - `topicId` does not identify a valid topic.
+
 ### Details
 
-If `{topicId}` does not identify an existing topic, raises `NotFoundError`.
-
-Otherwise, removes that topic.
+If no error was raised, removes that topic and returns a 204 No Content.

@@ -41,6 +41,10 @@ None.
   - `difficultyLevel` ('easy' | 'medium' | 'hard'): An indicator of the question's difficulty level.
   - `topicIds` (array of numbers): An array of IDs identifying the topics associated with the question.
 
+### Error Handling
+
+None.
+
 ### Details
 
 Finds all questions and filters them based on the given query parameters, as follows: 
