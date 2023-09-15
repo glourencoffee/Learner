@@ -1,4 +1,4 @@
-import { Navigate, Params, useLocation, useParams } from 'react-router-dom';
+import { Navigate, Params, useParams } from 'react-router-dom';
 import { Question as QuestionModel, QuestionOption } from '../../models';
 import { Resource, createResource } from '../../requests/createResource';
 import { Suspense, useMemo } from 'react';
