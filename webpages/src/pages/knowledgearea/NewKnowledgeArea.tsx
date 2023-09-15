@@ -1,7 +1,8 @@
-import KnowledgeAreaForm from '../../components/KnowledgeAreaForm';
+import KnowledgeAreaForm, {
+  KnowledgeAreaFormValues
+} from '../../components/KnowledgeAreaForm';
 import SuccessAlertAction from '../../components/SuccessAlertAction';
 import { createKnowledgeArea } from '../../api/knowledgeArea';
-import { KnowledgeArea } from '../../models/KnowledgeArea';
 
 function renderSuccessAlertAction(newAreaId: number): JSX.Element {
   const viewUrl = `/knowledgearea/${newAreaId}`;
@@ -17,8 +18,8 @@ function renderSuccessAlertAction(newAreaId: number): JSX.Element {
 
 export default function NewKnowledgeArea(): JSX.Element {
   
-  async function handleSubmit(area: KnowledgeArea): Promise<number> {
-    const newAreaId = await createKnowledgeArea(area);
+  async function handleSubmit(values: KnowledgeAreaFormValues): Promise<number> {
+    const newAreaId = await createKnowledgeArea(values);
     return newAreaId;
   }
 

@@ -1,11 +1,22 @@
-import { Suspense } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
-import usePromise from 'react-promise-suspense';
-import KnowledgeAreaForm from '../../components/KnowledgeAreaForm';
+import { Suspense, useMemo } from 'react';
+import { Navigate, Params, useParams } from 'react-router-dom';
+import KnowledgeAreaForm, { KnowledgeAreaFormValues } from '../../components/KnowledgeAreaForm';
 import ProgressBackdrop from '../../components/ProgressBackdrop';
 import SuccessAlertAction from '../../components/SuccessAlertAction';
-import { KnowledgeArea } from '../../models/KnowledgeArea';
 import { getKnowledgeArea, updateKnowledgeArea } from '../../api/knowledgeArea';
+import { ResourceOf, createResource } from '../../requests/createResource';
+
+interface ValidatedParams {
+  areaId: number | null;
+}
+
+function validateParams(params: Readonly<Params<string>>): ValidatedParams {
+  const { areaId } = params;
+
+  return {
+    areaId: parseInt(areaId ?? '') || null
+  };
+}
 
 function renderSuccessAlertAction(areaId: number): JSX.Element {
   const viewUrl = `/knowledgearea/${areaId}`;
@@ -13,11 +24,18 @@ function renderSuccessAlertAction(areaId: number): JSX.Element {
   return <SuccessAlertAction viewUrl={viewUrl} />;
 }
 
-function renderEditKnowledgeAreaForm(areaId: number): JSX.Element {
-  const defaultArea = usePromise(getKnowledgeArea, [areaId]);
+interface EditKnowledgeAreaResultProps {
+  resource: ResourceOf<typeof getKnowledgeArea>;
+}
 
-  async function handleSubmit(area: KnowledgeArea): Promise<void> {
-    await updateKnowledgeArea(area);
+function EditKnowledgeAreaResult({ resource }: EditKnowledgeAreaResultProps): JSX.Element {
+  const defaultArea = resource.data.read();
+
+  async function handleSubmit(values: KnowledgeAreaFormValues): Promise<void> {
+    await updateKnowledgeArea({
+      ...values,
+      id: defaultArea.id
+    });
   }
 
   function renderSuccessAlertText(): string {
@@ -27,28 +45,37 @@ function renderEditKnowledgeAreaForm(areaId: number): JSX.Element {
   return (
     <KnowledgeAreaForm
       variant='edition'
-      defaultArea={defaultArea}
+      defaultValues={defaultArea}
       onSubmit={handleSubmit}
       successAlert={{
         closable: true,
         renderText: renderSuccessAlertText,
-        renderAction: () => renderSuccessAlertAction(areaId)
+        renderAction: () => renderSuccessAlertAction(defaultArea.id)
       }}
     />
   );
 }
 
 export default function EditKnowledgeArea(): JSX.Element {
-  const params = useParams();
-  const areaId = parseInt(params.areaId ?? '');
+  const { areaId } = validateParams(useParams());
+  
+  const resource = useMemo(
+    () => (
+      (areaId === null)
+      ? null
+      : createResource(getKnowledgeArea(areaId))
+    ),
+    [areaId]
+  );
 
-  if (isNaN(areaId)) {
+  if (resource === null) {
     return <Navigate to='/' />;
   }
-
-  return (
-    <Suspense fallback={<ProgressBackdrop open />}>
-      {renderEditKnowledgeAreaForm(areaId)}
-    </Suspense>
-  );
+  else {
+    return (
+      <Suspense fallback={<ProgressBackdrop open />}>
+        <EditKnowledgeAreaResult resource={resource} />
+      </Suspense>
+    );
+  }
 }

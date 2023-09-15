@@ -1,38 +1,40 @@
 import * as request from '../requests/request';
 import * as schemas from '../schemas/knowledgeArea';
-import { KnowledgeArea } from '../models/KnowledgeArea';
+import {
+  KnowledgeArea,
+  KnowledgeAreaWithoutId,
+  KnowledgeAreaWithoutParentId
+} from '../models/KnowledgeArea';
 
-interface GetTopLevelKnowledgeAreaArgs {
+export interface GetTopLevelKnowledgeAreaOptions {
   nameFilter?: string;
 }
 
-type GetTopLevelKnowledgeAreaResult = Array<{
-  id: number;
-  name: string;
-}>
-
 export async function getTopLevelKnowledgeAreas(
-  args: GetTopLevelKnowledgeAreaArgs = {}
-): Promise<GetTopLevelKnowledgeAreaResult> {
-  
-  const queryParams = args;
-  
+  options: GetTopLevelKnowledgeAreaOptions = {}
+): Promise<KnowledgeAreaWithoutParentId[]> {
+    
   const result = await request.get(
     schemas.getTopLevelKnowledgeAreaSchema,
     '/knowledgearea/toplevel',
     {
-      queryParams
+      queryParams: options
     }
   );
 
   return result.areas;
 }
 
-export async function createKnowledgeArea(area: KnowledgeArea) {
+export async function createKnowledgeArea(values: KnowledgeAreaWithoutId): Promise<number> {
+  const {
+    name,
+    parentId
+  } = values;
+
   const path = (
-    (area.parentId === null)
+    (parentId === null)
     ? '/knowledgearea/toplevel'
-    : `/knowledgearea/${area.parentId}`
+    : `/knowledgearea/${parentId}`
   );
 
   const result = await request.post(
@@ -40,7 +42,7 @@ export async function createKnowledgeArea(area: KnowledgeArea) {
     path,
     {
       body: {
-        name: area.name
+        name
       }
     }
   );
@@ -48,7 +50,7 @@ export async function createKnowledgeArea(area: KnowledgeArea) {
   return result.id;
 }
 
-export async function getKnowledgeArea(areaId: number) {
+export async function getKnowledgeArea(areaId: number): Promise<KnowledgeArea> {
   return request.get(
     schemas.getKnowledgeAreaSchema,
     `/knowledgearea/${areaId}`
@@ -78,8 +80,10 @@ export interface ChildOfKnowledgeArea {
   type: 'area' | 'topic';
 }
 
-export async function getChildrenOfKnowledgeArea(areaId: number, options: GetChildrenOfKnowledgeAreaOptions = {}):
-  Promise<ChildOfKnowledgeArea[]> {
+export async function getChildrenOfKnowledgeArea(
+  areaId: number,
+  options: GetChildrenOfKnowledgeAreaOptions = {}
+): Promise<ChildOfKnowledgeArea[]> {
 
   const queryParams = {
     nameFilter: Boolean(options.nameFilter) ? options.nameFilter : undefined,

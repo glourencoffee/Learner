@@ -1,9 +1,9 @@
 /**
  * Represents a knowledge area.
  */
-export class KnowledgeArea {
+export interface KnowledgeArea {
   /**
-   * The id of a knowledge area or `NaN`, if not applicable.
+   * The id of a knowledge area.
    */
   id: number;
 
@@ -17,10 +17,10 @@ export class KnowledgeArea {
    * that knowledge area is top-level.
    */
   parentId: number | null;
-
-  constructor(id?: number, name?: string, parentId?: number | null) {
-    this.id       = (id !== undefined) ? id : NaN;
-    this.name     = name ?? '';
-    this.parentId = (parentId !== undefined) ? parentId : null;
-  }
 }
+
+export interface KnowledgeAreaWithoutId
+         extends Omit<KnowledgeArea, 'id'> {}
+
+export interface KnowledgeAreaWithoutParentId
+         extends Omit<KnowledgeArea, 'parentId'> {}

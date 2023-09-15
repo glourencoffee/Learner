@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react';
 import Form, { FormAlertProps } from './Form';
 import TextField from './TextField';
-import { KnowledgeArea } from '../models/KnowledgeArea';
+import { KnowledgeAreaWithoutId } from '../models';
 import ProgressBackdrop from './ProgressBackdrop';
 import KnowledgeAreaTreeSelect, {
   KnowledgeAreaTreeNode,
   KnowledgeAreaTreeRootNode
 } from './KnowledgeAreaTreeSelect';
+
+export interface KnowledgeAreaFormValues
+         extends KnowledgeAreaWithoutId
+{
+  id?: number;
+}
 
 /**
  * Extends `Form` for creation and edition of knowledge areas.
@@ -22,7 +28,7 @@ export interface KnowledgeAreaFormProps<T> {
    * 
    * This prop is used to set the default values of input fields.
    */
-  defaultArea?: KnowledgeArea;
+  defaultValues?: KnowledgeAreaFormValues;
 
   /**
    * This prop is forwarded to the prop `successAlert` of the underling `<Form>`.
@@ -32,24 +38,22 @@ export interface KnowledgeAreaFormProps<T> {
   /**
    * A callback function called when the form is submitted.
    * 
-   * @param area The data about the knowledge area stored in this form.
+   * @param values The values of this form.
    * @return A value to be forwarded to the prop `onSubmit` of the underlying `<Form>`.
    */
-  onSubmit?: (area: KnowledgeArea) => T | Promise<T>;
+  onSubmit?: (values: KnowledgeAreaFormValues) => T | Promise<T>;
 }
 
-type KnowledgeAreaWithParentNode = (
-  Omit<KnowledgeArea, 'parentId'> & {
-    parent: KnowledgeAreaTreeNode
-  }
-);
+interface KnowledgeAreaFormValuesWithNode extends Omit<KnowledgeAreaFormValues, 'parentId'> {
+  parent: KnowledgeAreaTreeNode
+}
 
-type KnowledgeAreaFormWithRootProps<T> = (
-  Omit<KnowledgeAreaFormProps<T>, 'defaultArea'> & {
-    root: KnowledgeAreaTreeRootNode,
-    defaultArea: KnowledgeAreaWithParentNode
-  }
-);
+interface KnowledgeAreaFormWithRootProps<T>
+  extends Omit<KnowledgeAreaFormProps<T>, 'defaultValues'>
+{
+  root: KnowledgeAreaTreeRootNode;
+  defaultValues: KnowledgeAreaFormValuesWithNode;
+}
 
 function KnowledgeAreaFormWithRoot<T>(props: KnowledgeAreaFormWithRootProps<T>): JSX.Element {
   //==================
@@ -58,7 +62,7 @@ function KnowledgeAreaFormWithRoot<T>(props: KnowledgeAreaFormWithRootProps<T>):
   const {
     root,
     variant,
-    defaultArea,
+    defaultValues,
     onSubmit
   } = props;
 
@@ -70,7 +74,7 @@ function KnowledgeAreaFormWithRoot<T>(props: KnowledgeAreaFormWithRootProps<T>):
     if (variant === 'edition') {
       // Do not let a node select itself as a parent if this
       // form is on edition mode.
-      return node.id == defaultArea.id;
+      return node.id == defaultValues.id;
     }
     else {
       // If a form is on creation mode, it can never select
@@ -79,11 +83,11 @@ function KnowledgeAreaFormWithRoot<T>(props: KnowledgeAreaFormWithRootProps<T>):
     }
   }
 
-  function validate({ name, parent }: KnowledgeAreaWithParentNode): void | object {
+  function validate({ name, parent }: KnowledgeAreaFormValuesWithNode): void | object {
 
     if ((variant === 'edition') &&
-        (parent === defaultArea.parent) &&
-        (name.toLowerCase() === defaultArea.name.toLowerCase()))
+        (parent === defaultValues.parent) &&
+        (name.toLowerCase() === defaultValues.name.toLowerCase()))
     {
       // On edition mode, an area may be submitted even if nothing changed,
       // that is, its current values are equal to the default values received
@@ -115,10 +119,13 @@ function KnowledgeAreaFormWithRoot<T>(props: KnowledgeAreaFormWithRootProps<T>):
   let handleSubmit;
 
   if (onSubmit !== undefined) {
-    handleSubmit = function(area: KnowledgeAreaWithParentNode): T | Promise<T> {
-      const areaModel = new KnowledgeArea(area.id, area.name, area.parent.id);
-      return onSubmit(areaModel);
-    }
+    handleSubmit = ({ parent, ...restValues }: KnowledgeAreaFormValuesWithNode) => (
+      onSubmit({
+        // When parent is root, use null, because root nodes have NaN as id.
+        parentId: parent.isRoot() ? null : parent.id,
+        ...restValues
+      })
+    );
   }
 
   //==================
@@ -128,7 +135,7 @@ function KnowledgeAreaFormWithRoot<T>(props: KnowledgeAreaFormWithRootProps<T>):
 
   return (
     <Form
-      initialValues={defaultArea}
+      initialValues={defaultValues}
       validate={validate}
       buttonText={buttonText}
       successAlert={props.successAlert}
@@ -156,7 +163,7 @@ function KnowledgeAreaFormWithRoot<T>(props: KnowledgeAreaFormWithRootProps<T>):
 
 interface KnowledgeAreaFormState {
   root: KnowledgeAreaTreeRootNode;
-  defaultArea: KnowledgeAreaWithParentNode;
+  defaultValues: KnowledgeAreaFormValuesWithNode;
 }
 
 /**
@@ -171,7 +178,7 @@ interface KnowledgeAreaFormState {
  * @param props The properties of this component.
  */
 export default function KnowledgeAreaForm<T>({
-  defaultArea,
+  defaultValues,
   ...props
 }: KnowledgeAreaFormProps<T>): React.ReactNode {
 
@@ -180,14 +187,14 @@ export default function KnowledgeAreaForm<T>({
   useEffect(() => {
     const root = new KnowledgeAreaTreeRootNode({ getChildren: 'area-only' });
 
-    const id       = defaultArea?.id       ?? NaN;
-    const name     = defaultArea?.name     ?? '';
-    const parentId = defaultArea?.parentId ?? null;
+    const id       = defaultValues?.id;
+    const name     = defaultValues?.name     ?? '';
+    const parentId = defaultValues?.parentId ?? null;
     
     if (parentId === null) {
       setState({
         root,
-        defaultArea: {
+        defaultValues: {
           id,
           name,
           parent: root
@@ -198,7 +205,7 @@ export default function KnowledgeAreaForm<T>({
       root.getChild((node) => node.id === parentId)
         .then((node) => setState({
           root,
-          defaultArea: {
+          defaultValues: {
             id,
             name,
             parent: node ?? root
@@ -214,7 +221,7 @@ export default function KnowledgeAreaForm<T>({
     return (
       <KnowledgeAreaFormWithRoot
         root={state.root}
-        defaultArea={state.defaultArea}
+        defaultValues={state.defaultValues}
         {...props}
       />
     );
