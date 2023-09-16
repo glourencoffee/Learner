@@ -1,4 +1,7 @@
 {
+  "name": "learner-webservices",
+  "private": true,
+  "version": "0.1.0",
   "dependencies": {
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
