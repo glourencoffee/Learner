@@ -45,7 +45,7 @@ GRANT ALL PRIVILEGES ON `learner`.* TO 'learner'@'localhost';
 5\. Optionally, grant privileges to user for remote access to the database. This is necessary if you intend to run the server in LAN:
 
 ```sql
-GRANT ALL PRIVILEGES ON `learner`.* TO 'learner'@'localhost' IDENTIFIED BY 'learner';
+GRANT ALL PRIVILEGES ON `learner`.* TO 'learner'@'%' IDENTIFIED BY 'learner';
 ```
 
 6\. Flush privileges:
