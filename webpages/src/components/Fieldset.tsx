@@ -92,7 +92,8 @@ export default function Fieldset(props: React.PropsWithChildren<FieldsetProps>):
             position: 'absolute',
             top: '-14px',
             left: '9px',
-            backgroundColor: theme.palette.background.default
+            backgroundColor: theme.palette.background.default,
+            zIndex: -1
           }}
         >
           <FormLabel error={props.error}>
@@ -132,7 +133,8 @@ export default function Fieldset(props: React.PropsWithChildren<FieldsetProps>):
         sx={{
           borderWidth: '1px',
           borderStyle: 'solid',
-          borderColor: props.error ? 'error.main' : undefined
+          borderColor: props.error ? 'error.main' : undefined,
+          zIndex: -1
         }}
         gap='1em'
         padding={props.disablePadding ? 0 : '0.7em'}
