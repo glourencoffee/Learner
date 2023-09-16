@@ -1,51 +1,65 @@
-import { AppBar, Link, Stack, Toolbar, Typography } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Stack,
+  Toolbar,
+  Typography
+} from '@mui/material';
 import Navigation from './Navigation';
 
-const headerTitle = 'Learner';
+const Logo = () =>
+(
+  <Box
+    component='img'
+    src='/logo.svg'
+    alt='Logo'
+    loading='eager'
+    width='32px'
+    height='32px'
+    sx={{ marginRight: '0.5em' }}
+  />
+);
 
-function HomeLink(): JSX.Element {
+interface TitleProps {
+  showLogo?: boolean;
+}
+
+function Title({ showLogo }: TitleProps): JSX.Element {
+  let logoElement;
+
+  if (showLogo) {
+    logoElement = <Logo />;
+  }
+
   return (
-    <Link
-      href='/'
-      underline='none'
-      flexGrow={1}
-    >
-      <Stack
-        flexDirection='row'
-        gap='0.5em'
+    <Stack direction='row'>
+      {logoElement}
+      <Typography
+        variant='h5'
+        noWrap
+        component='a'
+        href='/'
+        sx={{
+          fontWeight: 700,
+          color: 'common.white',
+          textDecoration: 'none',
+        }}
       >
-        <img
-          src='/logo.svg'
-          alt='Logo'
-          loading='lazy'
-          width='32px'
-          height='32px'
-        />
-        <Typography
-          variant='h5'
-          color='common.white'
-        >
-          {headerTitle}
-        </Typography>
-      </Stack>
-    </Link>
+        Learner
+      </Typography>
+    </Stack>
   );
 }
 
 export default function Header(): JSX.Element {
   return (
-    <AppBar position='sticky'>
-      <Toolbar variant='dense' disableGutters>
-        <Stack
-          flexDirection='row'
-          alignItems='center'
-          padding='0 0.5em'
-          gap='0.5em'
-          flexGrow={1}
-        > 
-          <HomeLink />
-          <Navigation />
-        </Stack>
+    <AppBar position='static'>
+      <Toolbar disableGutters>
+        <Navigation
+          renderElement={
+            (location) => <Title showLogo={location !== 'collapsed-navbar'}/>
+          }
+        />
       </Toolbar>
     </AppBar>
   );
