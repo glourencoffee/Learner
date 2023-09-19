@@ -7,7 +7,6 @@ import {
   Stack,
   Typography
 } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
 import {
   DifficultyLevel,
   QuestionOption as QuestionOptionModel,
@@ -28,6 +27,7 @@ import {
   pink
 } from '@mui/material/colors';
 import TopicChip from './TopicChip';
+import Markdown from './Markdown';
 
 interface ChipBoxProps {
   questionType: QuestionType;
@@ -126,7 +126,7 @@ interface QuestionBoxProps {
  */
 const QuestionBox = ({ questionId, questionText }: QuestionBoxProps) =>
 (
-  <Stack>
+  <Stack width='100%'>
     <Typography variant='h5' color='primary.dark'>
       {
         (questionId) === undefined
@@ -134,9 +134,9 @@ const QuestionBox = ({ questionId, questionText }: QuestionBoxProps) =>
         : 'Question #' + questionId
       }
     </Typography>
-    <ReactMarkdown>
+    <Markdown>
       {questionText}
-    </ReactMarkdown>
+    </Markdown>
   </Stack>
 );
 
@@ -286,9 +286,9 @@ const ExplanationBox = ({ text, visible }: ExplanationBoxProps) =>
       >
         Explanation
       </Typography>
-      <ReactMarkdown>
+      <Markdown>
         {text}
-      </ReactMarkdown>
+      </Markdown>
     </Stack>
   </Collapse>
 );
