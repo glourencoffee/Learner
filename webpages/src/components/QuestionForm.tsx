@@ -132,10 +132,12 @@ function OptionsField(): JSX.Element {
         helperText={error || 'Create answer options and select the correct answer.'}
         error={Boolean(error)}
       >
-        <TransitionGroup component={null}>
-          {optionElements}
-        </TransitionGroup>
-        {addOptionButton}
+        <Stack gap='0.5em'>
+          <TransitionGroup component={null}>
+            {optionElements}
+          </TransitionGroup>
+          {addOptionButton}
+        </Stack>
       </Fieldset>
     );
   }
