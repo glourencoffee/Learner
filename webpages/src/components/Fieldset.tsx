@@ -1,12 +1,9 @@
 import {
-  Box,
-  FormControl,
-  FormHelperText,
-  FormLabel,
+  InputBaseComponentProps,
   Stack,
-  Typography
 } from '@mui/material';
-import theme from '../theme';
+import TextField from './TextField';
+import React from 'react';
 
 export type FieldsetLabelPositions = 'inside' | 'outside';
 
@@ -55,6 +52,21 @@ export interface FieldsetProps {
 }
 
 /**
+ * The input root component requires a `ref` so that it can control the contained
+ * element, which is an `<input>` or a `<textarea>`. However, we are not rendering
+ * any input element at all, but rather a `<div>`. So, define a `<div>` component
+ * with a forward reference so that React won't complain that a `ref` is expected,
+ * though `ref` will be unused.
+ */
+const InputComponent = React.forwardRef(
+  ({ children }: InputBaseComponentProps, _: React.ForwardedRef<HTMLTextAreaElement>) =>
+(
+  <Stack width='100%'>
+    {children}
+  </Stack>
+));
+
+/**
  * This component renders a `<fieldset>` in a `<Form>` field style.
  * It takes a `label`, a `helperText`, and an `error` props and renders
  * them similarly to a `<TextField>`.
@@ -65,85 +77,57 @@ export interface FieldsetProps {
  * @param props The properties of this component.
  */
 export default function Fieldset(props: React.PropsWithChildren<FieldsetProps>): JSX.Element {
-  let labelElement;
-  let legendElement;
+  const {
+    fullWidth,
+    label,
+    labelPosition = 'inside',
+    helperText,
+    error,
+    disablePadding,
+    children
+  } = props;
 
-  if (props.label) {
-    if (props.labelPosition === 'outside') {
-      labelElement = (
-        <FormLabel error={props.error}>
-          <Typography
-            variant='overline'
-            color='inherit'
-            lineHeight={1}
-            gutterBottom
-            noWrap
-          >
-            {props.label}
-          </Typography>
-        </FormLabel>
-      );
-    }
-    else {
-      legendElement = (
-        <Box
-          component='legend'
-          sx={{
-            position: 'absolute',
-            top: '-14px',
-            left: '9px',
-            backgroundColor: theme.palette.background.default,
-            zIndex: -1
-          }}
-        >
-          <FormLabel error={props.error}>
-            <Typography
-              variant='caption'
-              color='inherit'
-              padding='0 3px'
-              noWrap
-            >
-              {props.label}
-            </Typography>
-          </FormLabel>
-        </Box>
-      );
-    }
-  }
-  
-  let helperTextElement;
-
-  if (props.helperText) {
-    helperTextElement = (
-      <FormHelperText
-        error={props.error}
-        margin='dense'
-      >
-        {props.helperText}
-      </FormHelperText>
-    );
-  }
-
+  //==============================================================================
+  // This component is implemented as <TextField> because using other UI elements
+  // to make it look like a <TextField> results in a bad UX. This stems from the
+  // fact that when a <fieldset> has a child <legend> element, the <legend> is
+  // positioned *inside* of that <fieldset>, making its box different from that
+  // of a <TextField>, which has its label positioned absolutely, *outside* of
+  // its own <fieldset>. The result is a UI defect where the border of <fieldset>
+  // is misaligned in comparison to that of a <TextField>. This is noticeable
+  // when a <TextField> and a <fieldset> are layed out side by side.
+  //
+  // Although this problem could be workarounded by making <legend>'s position
+  // absolute, this results in another bad UX where the <fieldset> has a full
+  // border, that is, its border "crosses" the <legend> element.
+  //
+  // MUI <TextField> already solves these problems. Fortunaly, the <TextField>
+  // component receives a prop `inputComponent` through `InputProps`, which
+  // allow us to customize the internal component. We do that by using a <div>
+  // for an internal component, instead of <input> or <textarea>. The result is
+  // a MUI-fashioned <fieldset> that can work as a component group.
+  //
+  // See this thread: https://stackoverflow.com/questions/55032966
+  //==============================================================================
   return (
-    <FormControl fullWidth={props.fullWidth}>
-      {labelElement}
-      <Stack
-        component='fieldset'
-        borderRadius='4px'
-        sx={{
-          borderWidth: '1px',
-          borderStyle: 'solid',
-          borderColor: props.error ? 'error.main' : undefined,
-          zIndex: -1
-        }}
-        gap='1em'
-        padding={props.disablePadding ? 0 : '0.7em'}
-        margin={0}
-      >
-        {legendElement}
-        {props.children}
-      </Stack>
-      {helperTextElement}
-    </FormControl>
+    <TextField
+      variant='outlined'
+      multiline
+      label={label}
+      labelPosition={labelPosition}
+      helperText={helperText}
+      error={error}
+      fullWidth={fullWidth}
+      InputLabelProps={{ shrink: true }}
+      InputProps={{
+        inputComponent: InputComponent,
+        sx: {
+          // Don't show text cursor, because we won't be editing anything.
+          cursor: 'default',
+          padding: disablePadding ? 0 : undefined
+        }
+      }}
+      inputProps={{ children: children }}
+    />
   );
 }
