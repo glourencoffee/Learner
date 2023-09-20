@@ -37,7 +37,12 @@ interface EditQuestionResultProps {
 }
 
 function EditQuestionResult({ resource }: EditQuestionResultProps): JSX.Element {
-  const { id, ...defaultValues } = resource.data.read();
+  const { id, options, ...rest } = resource.data.read();
+
+  const defaultValues: QuestionFormValues = {
+    ...rest,
+    options: options.map((option) => option.text)
+  };
 
   async function handleSubmit(values: QuestionFormValues): Promise<void> {
     await updateQuestion({
