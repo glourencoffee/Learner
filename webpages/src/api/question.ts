@@ -40,7 +40,7 @@ export async function getQuestions(options: GetQuestionsOptions = {}): Promise<Q
  * @param values Question data.
  * @returns The id of the newly-created question.
  */
-export async function createQuestion(values: QuestionWithoutId): Promise<number> {
+export async function createQuestion(values: QuestionWithoutId<string>): Promise<number> {
   const result = await request.post(
     schemas.createQuestionSchema,
     '/question/',
@@ -88,7 +88,7 @@ export async function getQuestion(id: number, options: GetQuestionOptions = {}):
  * 
  * @param question A question.
  */
-export async function updateQuestion(question: Question): Promise<void> {
+export async function updateQuestion(question: Question<string>): Promise<void> {
   const { id, ...values } = question;
 
   await request.put(

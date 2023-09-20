@@ -14,17 +14,18 @@ export interface QuestionOption {
   text: string;
 }
 
-export interface Question {
+export interface Question<OptionType = QuestionOption> {
   id: number;
   questionText: string;
-  options: QuestionOption[];
+  options: OptionType[];
   correctOptionIndex?: number;
   difficultyLevel: DifficultyLevel;
   topicIds: number[];
   explanationText: string;
 }
 
-export interface QuestionWithoutId extends Omit<Question, 'id'> {}
+export interface QuestionWithoutId<OptionType = QuestionOption>
+         extends Omit<Question<OptionType>, 'id'> {}
 
 /**
  * Returns whether a string case-insensitively matches the words

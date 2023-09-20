@@ -29,15 +29,15 @@ import Fieldset from './Fieldset';
 import TopicListSelect from './TopicListSelect';
 
 export interface QuestionFormValues 
-         extends QuestionWithoutId {}
+         extends QuestionWithoutId<string> {}
 
 function OptionsField(): JSX.Element {
   const formik = useFormikContext<QuestionFormValues>();
 
   const { options, correctOptionIndex } = formik.values;
 
-  function renderOption(arrayHelpers: ArrayHelpers<QuestionOptionModel[]>,
-                        option: QuestionOptionModel,
+  function renderOption(arrayHelpers: ArrayHelpers<string[]>,
+                        option: string,
                         index: number): JSX.Element
   {
     const removeButtonAdornment = (
@@ -67,8 +67,8 @@ function OptionsField(): JSX.Element {
         variant='standard'
         fullWidth
         placeholder={placeholder}
-        value={option.text}
-        onChange={(event) => arrayHelpers.replace(index, {...option, text: event.target.value})}
+        value={option}
+        onChange={(event) => arrayHelpers.replace(index, event.target.value)}
         InputProps={{
           endAdornment: removeButtonAdornment
         }}
@@ -99,7 +99,7 @@ function OptionsField(): JSX.Element {
     );
   }
 
-  function renderGroup(arrayHelpers: ArrayHelpers<QuestionOptionModel[]>): JSX.Element {
+  function renderGroup(arrayHelpers: ArrayHelpers<string[]>): JSX.Element {
     const optionElements = options.map(
       (option, index) => (
         <Collapse key={index}>
@@ -113,10 +113,7 @@ function OptionsField(): JSX.Element {
     if (options.length < 5) {
       addOptionButton = (
         <Button
-          onClick={() => arrayHelpers.push({
-            id: options.length + 1,
-            text: ''
-          })}
+          onClick={() => arrayHelpers.push('')}
         >
           Add option
         </Button>
@@ -237,6 +234,18 @@ function EditModeQuestionForm(): JSX.Element {
 function ViewModeQuestionForm(): JSX.Element {
   const formik = useFormikContext<QuestionFormValues>();
 
+  const {
+    options,
+    ...restValues
+  } = formik.values;
+
+  const mappedOptions = options.map(
+    (optionText, index): QuestionOptionModel => ({
+      id: (index + 1),
+      text: optionText
+    })
+  );
+
   function handleAnswer(_: QuestionOptionModel, index: number): boolean {
     return (formik.values.correctOptionIndex === index);
   }
@@ -244,7 +253,8 @@ function ViewModeQuestionForm(): JSX.Element {
   return (
     <Stack gap='1em'>
       <Question
-        {...formik.values}
+        {...restValues}
+        options={mappedOptions}
         onAnswer={handleAnswer}
       />
     </Stack>
@@ -264,7 +274,7 @@ function validateForm({
   }
 
   for (const option of options) {
-    if (option.text.length === 0) {
+    if (option.length === 0) {
       return {
         options: 'An option must not be empty.'
       };
@@ -316,16 +326,7 @@ export default function QuestionForm<SubmitResult>({
 
   const initialValues = defaultValues ?? {
     questionText: '',
-    options: [
-      {
-        id: 0,
-        text: ''
-      },
-      {
-        id: 1,
-        text: ''
-      }
-    ],
+    options: ['', ''],
     correctOptionIndex: 0,
     explanationText: '',
     difficultyLevel: DifficultyLevel.MEDIUM,
