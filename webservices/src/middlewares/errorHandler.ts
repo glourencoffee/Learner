@@ -74,6 +74,15 @@ function handleCriticalError(error: Error, request: Request, response: Response)
 
   response.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json(stdError);
   
+  const {
+    url,
+    method,
+    params,
+    query,
+    body
+  } = request;
+
+  console.error('Request:', { url, method, params, query, body });
   console.error(error);
   console.log('Application encountered a critical error. Exiting');
 
