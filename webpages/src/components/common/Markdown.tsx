@@ -1,7 +1,7 @@
-import { Chip } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import { CodeProps } from 'react-markdown/lib/ast-to-react';
 import { CodeBlock, monoBlue } from 'react-code-blocks';
+import { Chip } from '@mui/material';
 
 // The code theme used by both single-line and multi-line code.
 const codeTheme = monoBlue;

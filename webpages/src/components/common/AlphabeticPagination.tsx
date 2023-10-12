@@ -1,7 +1,11 @@
-import { Pagination, PaginationItem, PaginationRenderItemParams } from '@mui/material';
+import {
+  Pagination,
+  PaginationItem,
+  PaginationRenderItemParams
+} from '@mui/material';
 import React, { useState } from 'react';
 
-interface AlphabeticPaginationProps {
+export interface AlphabeticPaginationProps {
   /**
    * Defines the pages to show in the pagination bar. Each page becomes
    * a pagination item. For example, if this prop is `Set(['A', 'B', 'C'])`,

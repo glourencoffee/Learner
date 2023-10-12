@@ -1,5 +1,5 @@
-import { Navigate } from "react-router-dom";
-import ErrorBox from "../components/ErrorBox";
+import { Navigate } from 'react-router-dom';
+import { ErrorBox } from '../../components';
 
 export interface ErrorPageProps {
   error: unknown;

@@ -1,6 +1,6 @@
 import { Breadcrumbs, BreadcrumbsProps, Link } from '@mui/material';
-import { TreeNode } from './BaseTreeSelect';
 import { nanoid } from 'nanoid';
+import { TreeNode } from '../../models';
 
 interface NodeLink {
   name: string;

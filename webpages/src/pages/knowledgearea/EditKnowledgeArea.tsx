@@ -1,10 +1,16 @@
 import { Suspense, useMemo } from 'react';
 import { Navigate, Params, useParams } from 'react-router-dom';
-import KnowledgeAreaForm, { KnowledgeAreaFormValues } from '../../components/KnowledgeAreaForm';
-import ProgressBackdrop from '../../components/ProgressBackdrop';
-import SuccessAlertAction from '../../components/SuccessAlertAction';
-import { getKnowledgeArea, updateKnowledgeArea } from '../../api/knowledgeArea';
-import { ResourceOf, createResource } from '../../requests/createResource';
+import { ResourceOf, createResource } from '../../requests';
+import {
+  getKnowledgeArea,
+  updateKnowledgeArea
+} from '../../api';
+import {
+  KnowledgeAreaForm,
+  KnowledgeAreaFormValues,
+  ProgressBackdrop,
+  SuccessAlertAction
+} from '../../components';
 
 interface ValidatedParams {
   areaId: number | null;

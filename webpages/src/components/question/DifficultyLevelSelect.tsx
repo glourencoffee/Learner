@@ -1,6 +1,5 @@
-import ChipSelect from './ChipSelect';
-import ChipSelectOption from './ChipSelectItem';
-import { DifficultyLevel } from '../models';
+import { DifficultyLevel } from '../../models';
+import { ChipSelect, ChipSelectOption } from '../../components';
 
 export interface DifficultyLevelSelectProps {
   /**

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { TransitionGroup } from 'react-transition-group';
 import {
   Box,
   Button,
@@ -8,25 +10,26 @@ import {
 } from '@mui/material';
 import { RemoveCircle } from '@mui/icons-material';
 import { red } from '@mui/material/colors';
-import { useState } from 'react';
-import { TransitionGroup } from 'react-transition-group';
 import {
   ArrayHelpers,
   FieldArray,
   useField,
   useFormikContext
 } from 'formik';
-import Form, { FormProps } from './Form';
-import TextField from './TextField';
 import {
   DifficultyLevel,
   QuestionWithoutId,
   QuestionOption as QuestionOptionModel
-} from '../models';
-import Question from './Question';
-import QuestionOption from './QuestionOption';
-import Fieldset from './Fieldset';
-import TopicListSelect from './TopicListSelect';
+} from '../../models';
+import {
+  Fieldset,
+  Form,
+  FormProps,
+  Question,
+  QuestionOption,
+  TextField,
+  TopicListSelect
+} from '../../components';
 
 export interface QuestionFormValues 
          extends QuestionWithoutId<string> {}

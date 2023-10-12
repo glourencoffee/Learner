@@ -1,12 +1,13 @@
-import { Navigate, Params, useParams } from 'react-router-dom';
-import { Question as QuestionModel, QuestionOption } from '../../models';
-import { Resource, createResource } from '../../requests/createResource';
 import { Suspense, useMemo } from 'react';
-import { getQuestion } from '../../api/question';
-import QuestionSkeleton from '../../components/QuestionSkeleton';
+import { Navigate, Params, useParams } from 'react-router-dom';
 import { Stack } from '@mui/material';
-import Question from '../../components/Question';
-import { createAnswer } from '../../api/answer';
+import {
+  Question as QuestionModel, 
+  QuestionOption
+} from '../../models';
+import { Resource, createResource } from '../../requests';
+import { getQuestion, createAnswer } from '../../api';
+import { Question, QuestionSkeleton } from '../../components';
 
 interface ValidatedParams {
   questionId: number | null;

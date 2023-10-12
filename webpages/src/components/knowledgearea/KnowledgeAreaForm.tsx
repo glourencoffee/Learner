@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
-import Form, { FormAlertProps } from './Form';
-import TextField from './TextField';
-import { KnowledgeAreaWithoutId } from '../models';
-import ProgressBackdrop from './ProgressBackdrop';
-import KnowledgeAreaTreeSelect, {
+import { KnowledgeAreaWithoutId } from '../../models';
+import {
+  Form,
+  FormAlertProps,
+  KnowledgeAreaTreeSelect,
   KnowledgeAreaTreeNode,
-  KnowledgeAreaTreeRootNode
-} from './KnowledgeAreaTreeSelect';
+  KnowledgeAreaTreeRootNode,
+  ProgressBackdrop,
+  TextField
+} from '../../components';
 
 export interface KnowledgeAreaFormValues
          extends KnowledgeAreaWithoutId

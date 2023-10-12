@@ -1,8 +1,9 @@
-import KnowledgeAreaForm, {
-  KnowledgeAreaFormValues
-} from '../../components/KnowledgeAreaForm';
-import SuccessAlertAction from '../../components/SuccessAlertAction';
-import { createKnowledgeArea } from '../../api/knowledgeArea';
+import { createKnowledgeArea } from '../../api';
+import {
+  KnowledgeAreaForm,
+  KnowledgeAreaFormValues,
+  SuccessAlertAction
+} from '../../components';
 
 function renderSuccessAlertAction(newAreaId: number): JSX.Element {
   const viewUrl = `/knowledgearea/${newAreaId}`;

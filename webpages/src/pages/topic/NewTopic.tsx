@@ -1,6 +1,9 @@
-import TopicForm, { TopicFormValues } from '../../components/TopicForm';
-import SuccessAlertAction from '../../components/SuccessAlertAction';
-import { createTopic } from '../../api/topic';
+import { createTopic } from '../../api';
+import {
+  SuccessAlertAction,
+  TopicForm,
+  TopicFormValues
+} from '../../components';
 
 function renderSuccessAlertAction(newTopicId: number): JSX.Element {
   const viewUrl = `/topic/${newTopicId}`;

@@ -1,12 +1,13 @@
-import { Navigate, Params, useLocation, useParams } from 'react-router-dom';
-import { getQuestion, updateQuestion } from '../../api/question';
-import QuestionForm, {
-  QuestionFormValues
-} from '../../components/QuestionForm';
-import QuestionFormSkeleton from '../../components/QuestionFormSkeleton';
-import SuccessAlertAction from '../../components/SuccessAlertAction';
 import { Suspense, useEffect, useState } from 'react';
-import { ResourceOf, createResource } from '../../requests/createResource';
+import { Navigate, Params, useLocation, useParams } from 'react-router-dom';
+import { ResourceOf, createResource } from '../../requests';
+import { getQuestion, updateQuestion } from '../../api';
+import {
+  QuestionForm,
+  QuestionFormValues,
+  QuestionFormSkeleton,
+  SuccessAlertAction
+} from '../../components';
 
 interface ValidatedParams {
   questionId: number | null;

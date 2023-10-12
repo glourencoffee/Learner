@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Button,
   Chip,
@@ -8,26 +9,26 @@ import {
   Typography
 } from '@mui/material';
 import {
-  DifficultyLevel,
-  QuestionOption as QuestionOptionModel,
-  QuestionType,
-  QuestionWithoutId,
-  getQuestionType
-} from '../models/Question';
-import { nanoid } from 'nanoid';
-import { useState } from 'react';
-import QuestionOption, {
-  QuestionOptionColor
-} from './QuestionOption';
-import {
   blue,
   green,
   brown,
   teal,
   pink
 } from '@mui/material/colors';
-import TopicChip from './TopicChip';
-import Markdown from './Markdown';
+import { nanoid } from 'nanoid';
+import {
+  DifficultyLevel,
+  QuestionOption as QuestionOptionModel,
+  QuestionType,
+  QuestionWithoutId,
+  getQuestionType
+} from '../../models';
+import {
+  Markdown,
+  QuestionOption,
+  QuestionOptionColor,
+  TopicChip
+} from '../../components';
 
 interface ChipBoxProps {
   questionType: QuestionType;

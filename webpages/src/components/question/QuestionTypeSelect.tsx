@@ -1,6 +1,8 @@
-import ChipSelect from './ChipSelect';
-import ChipSelectOption from './ChipSelectItem';
-import { QuestionType } from '../models';
+import { QuestionType } from '../../models';
+import {
+  ChipSelect,
+  ChipSelectOption
+} from '../../components';
 
 export interface QuestionTypeSelectProps {
   /**

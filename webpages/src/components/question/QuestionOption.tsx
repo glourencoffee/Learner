@@ -1,7 +1,7 @@
 import { Avatar, ButtonBase, Stack } from '@mui/material';
 import { blue, green, orange, red } from '@mui/material/colors';
 import React from 'react';
-import theme from '../theme';
+import theme from '../../theme';
 
 export type QuestionOptionColor = 'selected' | 'correct' | 'incorrect';
 

@@ -1,9 +1,14 @@
-import TreeSelect, { TreeSelectProps, TreeSelectWithFormFieldProps, TreeSelectWithoutFormFieldProps } from './TreeSelect';
-import { TreeNode } from './BaseTreeSelect';
+import { TreeNode } from '../../models';
 import {
   getChildrenOfKnowledgeArea,
   getTopLevelKnowledgeAreas
-} from '../api/knowledgeArea';
+} from '../../api';
+import {
+  TreeSelect,
+  TreeSelectProps,
+  TreeSelectWithFormFieldProps,
+  TreeSelectWithoutFormFieldProps
+} from '../../components';
 
 type BasePredicateType = (child: TreeNode) => boolean;
 

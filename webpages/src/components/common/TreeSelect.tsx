@@ -1,5 +1,6 @@
 import { useField } from 'formik';
-import BaseTreeSelect, { TreeNode, BaseTreeSelectProps } from './BaseTreeSelect';
+import { TreeNode } from '../../models';
+import { BaseTreeSelect, BaseTreeSelectProps } from '../../components';
 
 export interface TreeSelectWithFormFieldProps extends
   Omit<

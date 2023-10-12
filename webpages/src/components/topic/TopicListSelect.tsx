@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+import { TransitionGroup } from 'react-transition-group';
 import {
   Collapse,
   Divider,
@@ -8,14 +10,13 @@ import {
 } from '@mui/material';
 import { green, red } from '@mui/material/colors';
 import { AddCircle, RemoveCircle } from '@mui/icons-material';
-import React, { useEffect, useState } from 'react';
-import { TransitionGroup } from 'react-transition-group';
-import KnowledgeAreaTreeSelect, {
+import {
+  KnowledgeAreaTreeSelect,
   KnowledgeAreaTreeNode,
-  KnowledgeAreaTreeRootNode
-} from './KnowledgeAreaTreeSelect';
-import TreeNodeBreadcrumbs from './TreeNodeBreadcrumbs';
-import ProgressBackdrop from './ProgressBackdrop';
+  KnowledgeAreaTreeRootNode,
+  ProgressBackdrop,
+  TreeNodeBreadcrumbs
+} from '../../components';
 
 interface ItemProps {
   secondaryAction?: React.ReactNode;

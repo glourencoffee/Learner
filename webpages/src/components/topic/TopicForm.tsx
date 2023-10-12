@@ -1,12 +1,14 @@
-import Form, { FormAlertProps } from './Form';
-import TextField from './TextField';
 import { useEffect, useState } from 'react';
-import ProgressBackdrop from './ProgressBackdrop';
 import { Link, Stack, Typography } from '@mui/material';
-import KnowledgeAreaTreeSelect, {
+import {
+  Form,
+  FormAlertProps,
+  KnowledgeAreaTreeSelect,
   KnowledgeAreaTreeNode,
-  KnowledgeAreaTreeRootNode
-} from './KnowledgeAreaTreeSelect';
+  KnowledgeAreaTreeRootNode,
+  ProgressBackdrop,
+  TextField
+} from '../../components';
 
 export interface TopicFormValues {
   topicName: string;

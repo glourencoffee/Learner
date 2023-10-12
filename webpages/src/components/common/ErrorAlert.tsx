@@ -1,10 +1,7 @@
-import {
-  Alert,
-  AlertTitle
-} from '@mui/material';
-import { RequestError } from '../requests/RequestError';
 import React from 'react';
-import ErrorBox from './ErrorBox';
+import { Alert, AlertTitle } from '@mui/material';
+import { RequestError } from '../../requests';
+import { ErrorBox } from '../../components';
 
 function getErrorTitle(error: unknown | Error): string {
   return (error instanceof Error) ? error.name : 'Unknown Error';

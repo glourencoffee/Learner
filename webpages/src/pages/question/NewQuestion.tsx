@@ -1,8 +1,9 @@
-import { createQuestion } from '../../api/question';
-import QuestionForm, {
-  QuestionFormValues
-} from '../../components/QuestionForm';
-import SuccessAlertAction from '../../components/SuccessAlertAction';
+import { createQuestion } from '../../api';
+import {
+  QuestionForm,
+  QuestionFormValues,
+  SuccessAlertAction
+} from '../../components';
 
 function renderSuccessAlertAction(newQuestionId: number): JSX.Element {
   const viewUrl = `/question/${newQuestionId}`;

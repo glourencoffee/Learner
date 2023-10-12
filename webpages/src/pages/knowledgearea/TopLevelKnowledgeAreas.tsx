@@ -1,4 +1,5 @@
 import { Suspense, useState } from 'react';
+import usePromise from 'react-promise-suspense';
 import {
   Box,
   Card,
@@ -9,11 +10,12 @@ import {
   Stack,
   Typography
 } from '@mui/material';
-import usePromise from 'react-promise-suspense';
 import { nanoid } from 'nanoid';
-import { getTopLevelKnowledgeAreas } from '../../api/knowledgeArea';
-import SearchBar from '../../components/SearchBar';
-import AlphabeticPagination from '../../components/AlphabeticPagination';
+import { getTopLevelKnowledgeAreas } from '../../api';
+import {
+  AlphabeticPagination,
+  SearchBar
+} from '../../components';
 
 interface TopLevelKnowledgeArea {
   id?: number;

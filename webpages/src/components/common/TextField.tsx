@@ -1,5 +1,5 @@
 import { useField, useFormikContext } from 'formik';
-import BaseTextField, { BaseTextFieldProps } from './BaseTextField';
+import { BaseTextField, BaseTextFieldProps } from '../../components';
 
 /**
  * A text field used as a form field provides the prop `formField`, and must:

@@ -1,9 +1,9 @@
+import React from 'react';
 import {
   InputBaseComponentProps,
   Stack,
 } from '@mui/material';
-import TextField from './TextField';
-import React from 'react';
+import { TextField } from '../../components';
 
 export type FieldsetLabelPositions = 'inside' | 'outside';
 

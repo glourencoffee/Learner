@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TransitionGroup } from 'react-transition-group';
 import {
   Alert,
   Box,
@@ -14,10 +15,8 @@ import {
   FormikValues,
   useFormik
 } from 'formik';
-import ProgressBackdrop from './ProgressBackdrop';
-import ErrorAlert from './ErrorAlert';
-import { TransitionGroup } from 'react-transition-group';
 import { nanoid } from 'nanoid';
+import { ErrorAlert, ProgressBackdrop } from '../../components';
 
 const DEFAULT_ALERT_DURATION = 30000;
 

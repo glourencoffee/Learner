@@ -6,9 +6,9 @@ import {
   Skeleton,
   Tooltip
 } from '@mui/material';
-import { Topic } from '../models';
-import { Resource, createResource } from '../requests/createResource';
-import { getTopic } from '../api/topic';
+import { Topic } from '../../models';
+import { Resource, createResource } from '../../requests';
+import { getTopic } from '../../api';
 
 interface ChipWithoutLabelProps extends Omit<ChipProps, 'label'> {}
 

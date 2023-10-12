@@ -1,3 +1,5 @@
+import React, { PropsWithChildren, Suspense, useEffect, useState } from 'react';
+import { Navigate, Params, useLocation, useParams } from 'react-router-dom';
 import {
   Chip,
   IconButton,
@@ -5,6 +7,7 @@ import {
   Stack,
   Typography
 } from '@mui/material';
+import { TreeItem, TreeView } from '@mui/x-tree-view';
 import {
   ChevronRight,
   Edit,
@@ -12,13 +15,10 @@ import {
   NorthEast,
   SouthWest
 } from '@mui/icons-material';
-import React, { PropsWithChildren, Suspense, useEffect, useState } from 'react';
-import { Navigate, Params, useLocation, useParams } from 'react-router-dom';
-import { getChildrenOfKnowledgeArea, getKnowledgeArea } from '../../api/knowledgeArea';
-import ProgressBackdrop from '../../components/ProgressBackdrop';
-import { TreeItem, TreeView } from '@mui/lab';
-import { Resource, createResource } from '../../requests/createResource';
 import { nanoid } from 'nanoid';
+import { Resource, createResource } from '../../requests';
+import { getChildrenOfKnowledgeArea, getKnowledgeArea } from '../../api';
+import { ProgressBackdrop } from '../../components';
 
 function ItemLabelIconButton({ href, children }: PropsWithChildren<{ href: string }>): JSX.Element {
   function handleClick(event: React.MouseEvent<HTMLAnchorElement>): void {

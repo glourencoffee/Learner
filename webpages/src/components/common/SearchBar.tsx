@@ -1,7 +1,7 @@
-import { Button, Stack, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { Button, Stack, TextField } from '@mui/material';
 
-interface SearchBarProps {
+export interface SearchBarProps {
   /**
    * Label of the search bar's text field.
    */

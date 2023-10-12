@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Box,
   Button,
@@ -12,7 +13,6 @@ import {
   styled
 } from '@mui/material';
 import { ChevronLeft, Menu as MenuIcon } from '@mui/icons-material';
-import { useState } from 'react';
 
 interface NavigationLink {
   readonly title: string;

@@ -1,25 +1,21 @@
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
-import { Stack } from '@mui/material';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
-import Header from './components/Header';
-import ErrorPage from './pages/ErrorPage';
-import UnderConstruction from './pages/UnderConstruction';
+import { Stack } from '@mui/material';
 import {
+  Header,
+  ErrorPage,
+  UnderConstruction,
   TopLevelKnowledgeAreas,
   NewKnowledgeArea,
   EditKnowledgeArea,
-  ViewKnowledgeArea
-} from './pages/knowledgearea';
-import {
+  ViewKnowledgeArea,
   EditTopic,
-  NewTopic
-} from './pages/topic';
-import {
+  NewTopic,
   NewQuestion,
   EditQuestion,
   ViewQuestion,
   ViewQuestions
-} from './pages/question';
+} from './pages';
 
 function renderErrorPage({ error }: FallbackProps): React.ReactNode {
   return <ErrorPage error={error} />;

@@ -1,10 +1,13 @@
 import { Suspense, useEffect, useState } from 'react';
 import { Navigate, Params, useLocation, useParams } from 'react-router-dom';
-import ProgressBackdrop from '../../components/ProgressBackdrop';
-import SuccessAlertAction from '../../components/SuccessAlertAction';
-import TopicForm, { TopicFormValues } from '../../components/TopicForm';
-import { Resource, createResource } from '../../requests/createResource';
-import { getTopic, updateTopic } from '../../api/topic';
+import { Resource, createResource } from '../../requests';
+import { getTopic, updateTopic } from '../../api';
+import {
+  ProgressBackdrop,
+  SuccessAlertAction,
+  TopicForm,
+  TopicFormValues
+} from '../../components';
 
 function renderSuccessAlertAction(areaId: number): JSX.Element {
   const viewUrl = `/topic/${areaId}`;

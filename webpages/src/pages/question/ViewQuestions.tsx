@@ -1,21 +1,29 @@
 import { Suspense,  useState } from 'react';
 import { Button, Divider, Stack, Typography } from '@mui/material';
-import Question from '../../components/Question';
-import QuestionSkeleton from '../../components/QuestionSkeleton';
-import DifficultyLevelSelect from '../../components/DifficultyLevelSelect';
-import QuestionTypeSelect from '../../components/QuestionTypeSelect';
-import Fieldset from '../../components/Fieldset';
-import TextField from '../../components/TextField';
-import TopicListSelect from '../../components/TopicListSelect';
 import {
   DifficultyLevel,
   Question as QuestionModel,
   QuestionOption,
   QuestionType
 } from '../../models';
-import { GetQuestionsOptions, getQuestions } from '../../api/question';
-import { Resource, createResource } from '../../requests/createResource';
-import { createAnswer } from '../../api/answer';
+import {
+  Resource,
+  createResource
+} from '../../requests';
+import {
+  GetQuestionsOptions,
+  getQuestions,
+  createAnswer
+} from '../../api';
+import {
+  DifficultyLevelSelect,
+  Fieldset,
+  Question,
+  QuestionSkeleton,
+  QuestionTypeSelect,
+  TextField,
+  TopicListSelect
+} from '../../components';
 
 interface SearchBoxValues {
   questionText: string;
