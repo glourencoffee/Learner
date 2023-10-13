@@ -67,8 +67,9 @@ function OptionsField(): JSX.Element {
 
     const labelElement = (
       <TextField
-        variant='standard'
+        variant='outlined'
         fullWidth
+        multiline
         placeholder={placeholder}
         value={option}
         onChange={(event) => arrayHelpers.replace(index, event.target.value)}
