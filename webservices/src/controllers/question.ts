@@ -135,6 +135,7 @@ async function toResponseQuestionObject(question: Question, isEdition: boolean) 
   const questionOptions = question.options.map(
     ({ id, text }) => ({ id, text })
   );
+  questionOptions.sort((a, b) => a.id - b.id);
 
   let correctOptionIndex;
   
