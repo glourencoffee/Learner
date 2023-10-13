@@ -1,7 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import { CodeProps } from 'react-markdown/lib/ast-to-react';
 import { CodeBlock, monoBlue } from 'react-code-blocks';
-import { Chip } from '@mui/material';
+import { Chip, Stack, Typography } from '@mui/material';
 
 // The code theme used by both single-line and multi-line code.
 const codeTheme = monoBlue;
@@ -102,12 +102,24 @@ export interface MarkdownProps {
  */
 export default function Markdown({ children }: MarkdownProps): JSX.Element {
   return (
-    <ReactMarkdown
-      components={{
-        code: renderCode
-      }}
-    >
-      {children}
-    </ReactMarkdown>
+    <Stack gap='0.5em'>
+      <ReactMarkdown
+        components={{
+          p(props) {
+            const { node, ...rest } = props;
+            return <Typography {...rest} />;
+          },
+
+          pre(props) {
+            const { node, ...rest } = props;
+            return <Typography component='pre' fontFamily='monospace' {...rest} />;
+          },
+
+          code: renderCode
+        }}
+      >
+        {children}
+      </ReactMarkdown>
+    </Stack>
   );
 }

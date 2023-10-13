@@ -128,7 +128,11 @@ interface QuestionBoxProps {
 const QuestionBox = ({ questionId, questionText }: QuestionBoxProps) =>
 (
   <Stack width='100%'>
-    <Typography variant='h5' color='primary.dark'>
+    <Typography
+      variant='h5'
+      color='primary.dark'
+      gutterBottom
+    >
       {
         (questionId) === undefined
         ? 'Question'
@@ -181,9 +185,9 @@ function AnswerBox({
     }
 
     const label = (
-      <Typography>
+      <Markdown>
         {option.text}
-      </Typography>
+      </Markdown>
     );
 
     return (
@@ -203,10 +207,14 @@ function AnswerBox({
 
   return (
     <Stack sx={{ width: '100%' }}>
-      <Typography variant='h5' color='primary.dark'>
+      <Typography
+        variant='h5'
+        color='primary.dark'
+        gutterBottom
+      >
         Answer
       </Typography>
-      <Stack gap='0.2em' marginTop='1em'>
+      <Stack gap='0.2em'>
         {optionElements}
       </Stack>
     </Stack>
